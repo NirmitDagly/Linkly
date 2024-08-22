@@ -1,0 +1,41 @@
+{
+  "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire",
+      "state" : {
+        "revision" : "f455c2975872ccd2d9c81594c658af65716e9b9a",
+        "version" : "5.9.1"
+      }
+    },
+    {
+      "identity" : "logger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NirmitDagly/Logger",
+      "state" : {
+        "revision" : "ac2df6fc7605b5d6c2302d91a03a39371c8af8ee",
+        "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "network",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NirmitDagly/Network",
+      "state" : {
+        "revision" : "66c8e86d9bba1d66a05bff781fae7e5fbaf0b715",
+        "version" : "1.0.7"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "9cb486020ebf03bfa5b5df985387a14a98744537",
+        "version" : "1.6.1"
+      }
+    }
+  ],
+  "version" : 2
+}
