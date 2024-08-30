@@ -9,13 +9,13 @@ import Foundation
 import Network
 
 public struct TerminalStatus: Codable {
-    var sessionID: String?
-    var responseType: String
-    var response: TerminalStatusDetails
+    public var sessionID: String?
+    public var responseType: String
+    public var response: TerminalStatusDetails
 }
 
 // MARK: - Terminal Status Details
-struct TerminalStatusDetails: Codable {
+public struct TerminalStatusDetails: Codable {
     let merchant: String
     let nii: Int
     let catid, caid: String

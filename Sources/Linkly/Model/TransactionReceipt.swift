@@ -9,11 +9,11 @@ import Foundation
 import Network
 
 public struct TransactionReceipt: Codable {
-    var responseType: String
-    var response: TransactionReceiptDetails
+    public var responseType: String
+    public var response: TransactionReceiptDetails
 }
 
-struct TransactionReceiptDetails: Codable {
+public struct TransactionReceiptDetails: Codable {
     var merchant: String
     var receiptText: [String]
     var success: Bool

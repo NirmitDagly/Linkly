@@ -10,12 +10,12 @@ import SwiftUI
 import Network
 
 public struct TransactionModel: Codable {
-    var linklyTransactionSessionID: String?
-    var linklyTransactionType: String
-    var linklyTransaction: LinklyTransaction
+    public var linklyTransactionSessionID: String?
+    public var linklyTransactionType: String
+    public var linklyTransaction: LinklyTransaction
 }
 
-struct LinklyTransaction: Codable {
+public struct LinklyTransaction: Codable {
     var txnType: String
     var merchant: String
     var cardType: String

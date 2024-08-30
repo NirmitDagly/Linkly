@@ -9,7 +9,7 @@ import Foundation
 import Network
 
 public struct SendKey: Codable {
-    var sessionId: String?
-    var responseType: String
-    var response: String?
+    public var sessionId: String?
+    public var responseType: String
+    public var response: String?
 }

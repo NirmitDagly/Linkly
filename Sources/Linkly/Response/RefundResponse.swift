@@ -9,9 +9,9 @@ import Foundation
 import Network
 
 public struct RefundResponse: Codable {
-    var linklyRefundSessionID: String?
-    var linklyRefundResponseType: String
-    var linklyRefundResponse: LinklyTransactionResponse
+    public var linklyRefundSessionID: String?
+    public var linklyRefundResponseType: String
+    public var linklyRefundResponse: LinklyTransactionResponse
     
     enum CodingKeys: String, CodingKey {
         case linklyRefundSessionID = "sessionId"

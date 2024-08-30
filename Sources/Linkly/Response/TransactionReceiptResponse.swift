@@ -9,8 +9,8 @@ import Foundation
 import Network
 
 public struct TransactionReceiptResponse: Codable {
-    var responseType: String
-    var response: TransactionReceiptDetailsResponse
+    public var responseType: String
+    public var response: TransactionReceiptDetailsResponse
 
     enum CodingKeys: String, CodingKey {
         case responseType = "responseType"
@@ -27,7 +27,7 @@ struct TransactionReceiptResponseMapper: Mappable {
     }
 }
 
-struct TransactionReceiptDetailsResponse: Codable {
+public struct TransactionReceiptDetailsResponse: Codable {
     var merchant: String
     var receiptText: [String]
     var success: Bool

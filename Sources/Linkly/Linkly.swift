@@ -31,7 +31,7 @@ protocol TerminalOperationRepository {
     func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon
 }
 
-public final class TerminalPairing: TerminalOperationRepository {
+public class TerminalPairing: TerminalOperationRepository {
 
     private let apiClientService: APIClientService
 
@@ -128,7 +128,7 @@ protocol TransactionRepository {
     ) async throws -> TransactionReceipt
 }
 
-public final class Transaction: TransactionRepository {
+public class Transaction: TransactionRepository {
     
     private let apiClientService: APIClientService
 

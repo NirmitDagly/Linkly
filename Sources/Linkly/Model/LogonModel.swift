@@ -9,12 +9,12 @@ import Foundation
 import Network
 
 public struct Logon: Codable {
-    var linklyLogonSessionID: String?
-    var linklyLogonResponseType: String
-    var linklyLogonsponse: LinklyLogon
+    public var linklyLogonSessionID: String?
+    public var linklyLogonResponseType: String
+    public var linklyLogonsponse: LinklyLogon
 }
 
-struct LinklyLogon: Codable {
+public struct LinklyLogon: Codable {
     var pinPadVersion: String
     var success: Bool
     var responseCode: String

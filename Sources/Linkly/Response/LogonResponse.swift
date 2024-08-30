@@ -9,9 +9,9 @@ import Foundation
 import Network
 
 public struct LogonResponse: Codable {
-    var linklyLogonSessionID: String?
-    var linklyLogonResponseType: String
-    var linklyLogonsponse: LinklyLogonResponse
+    public var linklyLogonSessionID: String?
+    public var linklyLogonResponseType: String
+    public var linklyLogonsponse: LinklyLogonResponse
     
     enum CodingKeys: String, CodingKey {
         case linklyLogonSessionID = "sessionId"
@@ -30,15 +30,15 @@ struct LogonResponseMapper: Mappable {
     }
 }
 
-struct LinklyLogonResponse: Codable {
-    var pinPadVersion: String
-    var success: Bool
-    var responseCode: String
-    var responseText: String
-    var date: String
-    var catID: String
-    var caID: String
-    var stan: Int
+public struct LinklyLogonResponse: Codable {
+    public var pinPadVersion: String
+    public var success: Bool
+    public var responseCode: String
+    public var responseText: String
+    public var date: String
+    public var catID: String
+    public var caID: String
+    public var stan: Int
     
     enum CodingKeys: String, CodingKey {
         case pinPadVersion

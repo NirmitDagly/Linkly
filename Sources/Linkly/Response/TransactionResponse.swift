@@ -10,9 +10,9 @@ import SwiftUI
 import Network
 
 public struct TransactionModelResponse: Codable {
-    var linklyTransactionSessionID: String?
-    var linklyTransactionResponseType: String
-    var linklyTransactionResponse: LinklyTransactionResponse
+    public var linklyTransactionSessionID: String?
+    public var linklyTransactionResponseType: String
+    public var linklyTransactionResponse: LinklyTransactionResponse
     
     enum CodingKeys: String, CodingKey {
         case linklyTransactionSessionID = "sessionId"
@@ -30,7 +30,7 @@ struct TransactionModelResponseMapper: Mappable {
     }
 }
 
-struct LinklyTransactionResponse: Codable {
+public struct LinklyTransactionResponse: Codable {
     var txnType: String
     var merchant: String
     var cardType: String

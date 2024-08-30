@@ -9,8 +9,8 @@ import Foundation
 import Network
 
 public struct Refund: Codable {
-    var linklyRefundSessionID: String?
-    var linklyRefundResponseType: String
-    var linklyRefund: LinklyTransaction
+    public var linklyRefundSessionID: String?
+    public var linklyRefundResponseType: String
+    public var linklyRefund: LinklyTransaction
 }
 

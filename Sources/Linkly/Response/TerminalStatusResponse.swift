@@ -9,9 +9,9 @@ import Foundation
 import Network
 
 public struct TerminalStatusResponse: Codable {
-    var sessionID: String?
-    var responseType: String
-    var response: TerminalStatusDetailsResponse
+    public var sessionID: String?
+    public var responseType: String
+    public var response: TerminalStatusDetailsResponse
 
     enum CodingKeys: String, CodingKey {
         case sessionID = "sessionId"
@@ -29,7 +29,7 @@ struct TerminalStatusResponseMapper: Mappable {
 }
 
 // MARK: - Terminal Status Details
-struct TerminalStatusDetailsResponse: Codable {
+public struct TerminalStatusDetailsResponse: Codable {
     let merchant: String
     let nii: Int
     let catid, caid: String

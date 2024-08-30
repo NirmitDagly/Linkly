@@ -19,9 +19,9 @@ public struct AuthTokenResponse: Codable {
     }
 }
 
-struct AuthTokenResponseMapper: Mappable {
+public struct AuthTokenResponseMapper: Mappable {
     
-    func map(_ input: AuthTokenResponse) -> AuthTokenModel {
+    public func map(_ input: AuthTokenResponse) -> AuthTokenModel {
         return .init(
             token: input.token,
             expirySeconds: input.expirySeconds
