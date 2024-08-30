@@ -8,7 +8,7 @@
 import Foundation
 import Network
 
-struct TerminalStatus: Codable {
+public struct TerminalStatus: Codable {
     var sessionID: String?
     var responseType: String
     var response: TerminalStatusDetails

@@ -8,7 +8,7 @@
 import Foundation
 import Network
 
-struct SendKeyResponse: Codable {
+public struct SendKeyResponse: Codable {
     var sessionId: String?
     var responseType: String
     var response: String?

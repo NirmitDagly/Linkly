@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Network
 
-struct AuthTokenModel: Codable {
+public struct AuthTokenModel: Codable {
     var token: String
     var expirySeconds: Double
 }

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Network
 
-struct PairingModel: Codable {
+public struct PairingModel: Codable {
     var terminalSerialNumber: String
     var terminalUserName: String
     var terminalPassword: String

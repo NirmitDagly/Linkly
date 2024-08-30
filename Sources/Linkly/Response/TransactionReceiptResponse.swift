@@ -8,7 +8,7 @@
 import Foundation
 import Network
 
-struct TransactionReceiptResponse: Codable {
+public struct TransactionReceiptResponse: Codable {
     var responseType: String
     var response: TransactionReceiptDetailsResponse
 

@@ -31,6 +31,62 @@ protocol TerminalOperationRepository {
     func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon
 }
 
+public final class TerminalPairing: TerminalOperationRepository {
+
+    private let apiClientService: APIClientService
+
+    public init(apiClientService: APIClientService) {
+        self.apiClientService = apiClientService
+    }
+    
+    public func pairTerminal(withTerminalNumber terminalNumber: String,
+                      andUsername username: String,
+                      andPassword password: String,
+                      andPairingCode pairCode: String
+    ) async throws -> PairingModel {
+        try await apiClientService.request(
+            APIEndPoints.initiatePairing(withTerminalNumber: terminalNumber,
+                                         andUsername: username,
+                                         andPassword: password,
+                                         andPairingCode: pairCode
+                                        ),
+            mapper: PairingResponseMapper()
+        )
+    }
+    
+    public func getAuthToken(withSecret secret: String,
+                      forPOS posName: String,
+                      andPOSVersion posVersion: String,
+                      andPOSID posID: String,
+                      andPOSVendorID vendorID: String
+    ) async throws -> AuthTokenModel {
+        try await apiClientService.request(
+            APIEndPoints.getAuthToken(withSecret: secret,
+                                      forPOS: posName,
+                                      andPOSVersion: posVersion,
+                                      andPOSID: posID,
+                                      andPOSVendorID: vendorID
+                                     ),
+            mapper: AuthTokenResponseMapper()
+        )
+    }
+
+    public func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus {
+        try await apiClientService.request(
+            APIEndPoints.checkTerminalStatus(withSessionID: sessionID),
+            mapper: TerminalStatusResponseMapper()
+        )
+    }
+    
+    public func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon {
+        try await apiClientService.request(
+            APIEndPoints.logonToPinpad(withSessionID: sessionID),
+            mapper: LogonResponseMapper()
+        )
+    }
+}
+
+
 protocol TransactionRepository {
     
     func initiateTransaction(withSessionID sessionID: String,
@@ -70,61 +126,6 @@ protocol TransactionRepository {
                                 andShouldAutoPrintReceipt autoPrintReceipt: String,
                                 andReceiptReprintType reprintType: String
     ) async throws -> TransactionReceipt
-}
-
-public final class TerminalPairing: TerminalOperationRepository {
-
-    private let apiClientService: APIClientService
-
-    public init(apiClientService: APIClientService) {
-        self.apiClientService = apiClientService
-    }
-    
-    func pairTerminal(withTerminalNumber terminalNumber: String,
-                      andUsername username: String,
-                      andPassword password: String,
-                      andPairingCode pairCode: String
-    ) async throws -> PairingModel {
-        try await apiClientService.request(
-            APIEndPoints.initiatePairing(withTerminalNumber: terminalNumber,
-                                         andUsername: username,
-                                         andPassword: password,
-                                         andPairingCode: pairCode
-                                        ),
-            mapper: PairingResponseMapper()
-        )
-    }
-    
-    func getAuthToken(withSecret secret: String,
-                      forPOS posName: String,
-                      andPOSVersion posVersion: String,
-                      andPOSID posID: String,
-                      andPOSVendorID vendorID: String
-    ) async throws -> AuthTokenModel {
-        try await apiClientService.request(
-            APIEndPoints.getAuthToken(withSecret: secret,
-                                      forPOS: posName,
-                                      andPOSVersion: posVersion,
-                                      andPOSID: posID,
-                                      andPOSVendorID: vendorID
-                                     ),
-            mapper: AuthTokenResponseMapper()
-        )
-    }
-
-    func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus {
-        try await apiClientService.request(
-            APIEndPoints.checkTerminalStatus(withSessionID: sessionID),
-            mapper: TerminalStatusResponseMapper()
-        )
-    }
-    
-    func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon {
-        try await apiClientService.request(
-            APIEndPoints.logonToPinpad(withSessionID: sessionID),
-            mapper: LogonResponseMapper()
-        )
-    }
 }
 
 public final class Transaction: TransactionRepository {

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Network
 
-struct PairingResponse: Codable {
+public struct PairingResponse: Codable {
     public let terminalSerialNumber: String
     public let terminalUserName: String
     public let terminalPassword: String

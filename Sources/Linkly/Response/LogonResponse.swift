@@ -8,7 +8,7 @@
 import Foundation
 import Network
 
-struct LogonResponse: Codable {
+public struct LogonResponse: Codable {
     var linklyLogonSessionID: String?
     var linklyLogonResponseType: String
     var linklyLogonsponse: LinklyLogonResponse

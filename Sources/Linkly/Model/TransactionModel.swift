@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Network
 
-struct TransactionModel: Codable {
+public struct TransactionModel: Codable {
     var linklyTransactionSessionID: String?
     var linklyTransactionType: String
     var linklyTransaction: LinklyTransaction
