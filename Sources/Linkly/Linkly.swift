@@ -128,7 +128,7 @@ protocol TransactionRepository {
     ) async throws -> TransactionReceipt
 }
 
-public class Transaction: TransactionRepository {
+public class TransactionControl: TransactionRepository {
     
     private let apiClientService: APIClientService
 
