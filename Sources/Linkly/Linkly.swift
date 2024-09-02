@@ -136,7 +136,7 @@ public class TransactionControl: TransactionRepository {
         self.apiClientService = apiClientService
     }
     
-    func initiateTransaction(withSessionID sessionID: String,
+    public func initiateTransaction(withSessionID sessionID: String,
                              andMerchant merchant: String,
                              withTxnType txnType: String,
                              forPurchaseAmount amount: String,
@@ -165,7 +165,7 @@ public class TransactionControl: TransactionRepository {
         )
     }
     
-    func refundTransaction(withSessionID sessionID: String,
+    public func refundTransaction(withSessionID sessionID: String,
                            andMerchant merchant: String,
                            withTxnType txnType: String,
                            forPurchaseAmount amount: String,
@@ -194,14 +194,14 @@ public class TransactionControl: TransactionRepository {
         )
     }
     
-    func cancelTransaction(forSessionID sessionID: String) async throws -> SendKey {
+    public func cancelTransaction(forSessionID sessionID: String) async throws -> SendKey {
         try await apiClientService.request(
             APIEndPoints.cancelTransaction(forSessionID: sessionID),
             mapper: SendKeyResponseResponseMapper()
         )
     }
     
-    func getTransactionStatus(forSessionID sessionID: String) async throws -> TransactionModel {
+    public func getTransactionStatus(forSessionID sessionID: String) async throws -> TransactionModel {
         
         try await apiClientService.request(
             APIEndPoints.getTransactionStatus(forSessionID: sessionID),
@@ -209,7 +209,7 @@ public class TransactionControl: TransactionRepository {
         )
     }
     
-    func getTransactionReceipts(withSessionID sessionID: String,
+    public func getTransactionReceipts(withSessionID sessionID: String,
                                 andMerchant merchant: String,
                                 withTxnRefNumber txnRefNumber: String,
                                 onApplication application: String,
