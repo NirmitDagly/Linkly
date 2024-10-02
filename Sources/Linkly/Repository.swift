@@ -1,5 +1,5 @@
 //
-//  Linkly.swift
+//  Repository.swift
 //
 //
 //  Created by Miamedia Developer on 15/08/24.
@@ -40,9 +40,9 @@ public class TerminalPairing: TerminalOperationRepository {
     }
     
     public func pairTerminal(withTerminalNumber terminalNumber: String,
-                      andUsername username: String,
-                      andPassword password: String,
-                      andPairingCode pairCode: String
+                             andUsername username: String,
+                             andPassword password: String,
+                             andPairingCode pairCode: String
     ) async throws -> PairingModel {
         try await apiClientService.request(
             APIEndPoints.initiatePairing(withTerminalNumber: terminalNumber,
@@ -55,10 +55,10 @@ public class TerminalPairing: TerminalOperationRepository {
     }
     
     public func getAuthToken(withSecret secret: String,
-                      forPOS posName: String,
-                      andPOSVersion posVersion: String,
-                      andPOSID posID: String,
-                      andPOSVendorID vendorID: String
+                             forPOS posName: String,
+                             andPOSVersion posVersion: String,
+                             andPOSID posID: String,
+                             andPOSVendorID vendorID: String
     ) async throws -> AuthTokenModel {
         try await apiClientService.request(
             APIEndPoints.getAuthToken(withSecret: secret,
@@ -137,16 +137,16 @@ public class TransactionControl: TransactionRepository {
     }
     
     public func initiateTransaction(withSessionID sessionID: String,
-                             andMerchant merchant: String,
-                             withTxnType txnType: String,
-                             forPurchaseAmount amount: String,
-                             withTxnRefNumber txnRefNumber: String,
-                             andCurrencyCode currencyCode: String,
-                             withCutReceiptOption cutReceipt: String,
-                             onApplication application: String,
-                             withTipEnabled enableTip: Int,
-                             andShouldAutoPrintReceipt autoPrintReceipt: String,
-                             andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
+                                    andMerchant merchant: String,
+                                    withTxnType txnType: String,
+                                    forPurchaseAmount amount: String,
+                                    withTxnRefNumber txnRefNumber: String,
+                                    andCurrencyCode currencyCode: String,
+                                    withCutReceiptOption cutReceipt: String,
+                                    onApplication application: String,
+                                    withTipEnabled enableTip: Int,
+                                    andShouldAutoPrintReceipt autoPrintReceipt: String,
+                                    andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
     ) async throws -> TransactionModel {
         try await apiClientService.request(
             APIEndPoints.initiateTransaction(withSessionID: sessionID,
@@ -166,16 +166,16 @@ public class TransactionControl: TransactionRepository {
     }
     
     public func refundTransaction(withSessionID sessionID: String,
-                           andMerchant merchant: String,
-                           withTxnType txnType: String,
-                           forPurchaseAmount amount: String,
-                           withTxnRefNumber txnRefNumber: String,
-                           andCurrencyCode currencyCode: String,
-                           withCutReceiptOption cutReceipt: String,
-                           onApplication application: String,
-                           withTipEnabled enableTip: Int,
-                           andShouldAutoPrintReceipt autoPrintReceipt: String,
-                           andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
+                                  andMerchant merchant: String,
+                                  withTxnType txnType: String,
+                                  forPurchaseAmount amount: String,
+                                  withTxnRefNumber txnRefNumber: String,
+                                  andCurrencyCode currencyCode: String,
+                                  withCutReceiptOption cutReceipt: String,
+                                  onApplication application: String,
+                                  withTipEnabled enableTip: Int,
+                                  andShouldAutoPrintReceipt autoPrintReceipt: String,
+                                  andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
     ) async throws -> Refund {
         try await apiClientService.request(
             APIEndPoints.initiateRefund(withSessionID: sessionID,
@@ -210,11 +210,11 @@ public class TransactionControl: TransactionRepository {
     }
     
     public func getTransactionReceipts(withSessionID sessionID: String,
-                                andMerchant merchant: String,
-                                withTxnRefNumber txnRefNumber: String,
-                                onApplication application: String,
-                                andShouldAutoPrintReceipt autoPrintReceipt: String,
-                                andReceiptReprintType reprintType: String
+                                       andMerchant merchant: String,
+                                       withTxnRefNumber txnRefNumber: String,
+                                       onApplication application: String,
+                                       andShouldAutoPrintReceipt autoPrintReceipt: String,
+                                       andReceiptReprintType reprintType: String
     ) async throws -> TransactionReceipt {
         try await apiClientService.request(
             APIEndPoints.getTransactionReceipt(withSessionID: sessionID,
@@ -228,3 +228,4 @@ public class TransactionControl: TransactionRepository {
         )
     }
 }
+

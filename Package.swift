@@ -16,7 +16,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/NirmitDagly/Network", from: "1.0.0"),
-        .package(url: "https://github.com/NirmitDagly/Logger", from: "1.0.0")
+        .package(url: "https://github.com/NirmitDagly/Logger", from: "1.0.0"),
+        .package(url: "https://github.com/NirmitDagly/DesignSystem", from: "1.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,7 +26,8 @@ let package = Package(
             name: "Linkly",
             dependencies: [
                 .product(name: "Network", package: "Network"),
-                .product(name:"Logger", package: "Logger")
+                .product(name:"Logger", package: "Logger"),
+                .product(name:"DesignSystem", package: "DesignSystem")
             ]),
         .testTarget(
             name: "LinklyTests",

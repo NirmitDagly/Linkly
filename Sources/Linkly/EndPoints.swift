@@ -19,10 +19,6 @@ class APIEndPoints {
         return .init(
             path: "/pairing/cloudpos",
             httpMethod: .post,
-            headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            ],
             bodyParameter: .dictionary(
                 [
                     "username" : username,
@@ -43,10 +39,6 @@ class APIEndPoints {
         return .init(
             path: "/pairing/cloudpos",
             httpMethod: .post,
-            headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            ],
             bodyParameter: .dictionary(
                 [
                     "secret" : secret,
@@ -65,9 +57,7 @@ class APIEndPoints {
             path: "\(sessionID)/status?async=false",
             httpMethod: .get,
             headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer abnjvnfknlms.cmnodc;md;alsucdl;"
+                "Authorization": "Bearer \(authToken)"
             ],
             bodyParameter: .dictionary(
                 [
@@ -87,9 +77,7 @@ class APIEndPoints {
             path: "\(sessionID)/logon?async=false",
             httpMethod: .get,
             headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer abnjvnfknlms.cmnodc;md;alsucdl;"
+                "Authorization": "Bearer \(authToken)"
             ],
             bodyParameter: .dictionary(
                 [
@@ -122,9 +110,7 @@ class APIEndPoints {
             path: "\(sessionID)/transaction?async=false",
             httpMethod: .post,
             headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer abnjvnfknlms.cmnodc;md;alsucdl;"
+                "Authorization": "Bearer \(authToken)"
             ],
             bodyParameter: .dictionary(
                 [
@@ -151,9 +137,7 @@ class APIEndPoints {
             path: "\(sessionID)/sendkey?async=false",
             httpMethod: .post,
             headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer abnjvnfknlms.cmnodc;md;alsucdl;"
+                "Authorization": "Bearer \(authToken)"
             ],
             bodyParameter: .dictionary(
                 [
@@ -183,9 +167,7 @@ class APIEndPoints {
             path: "\(sessionID)/transaction?async=false",
             httpMethod: .post,
             headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer abnjvnfknlms.cmnodc;md;alsucdl;"
+                "Authorization": "Bearer \(authToken)"
             ],
             bodyParameter: .dictionary(
                 [
@@ -211,9 +193,7 @@ class APIEndPoints {
             path: "\(sessionID)/transaction",
             httpMethod: .get,
             headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer abnjvnfknlms.cmnodc;md;alsucdl;"
+                "Authorization": "Bearer \(authToken)"
             ],
             bodyParameter: .dictionary([:],
                                        options: .prettyPrinted
@@ -232,9 +212,7 @@ class APIEndPoints {
             path: "\(sessionID)/ReprintReceipt?async=false",
             httpMethod: .post,
             headers: [
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer abnjvnfknlms.cmnodc;md;alsucdl;"
+                "Authorization": "Bearer \(authToken)"
             ],
             bodyParameter: .dictionary(
                 [

@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "designsystem",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/NirmitDagly/DesignSystem",
+      "state" : {
+        "revision" : "ad3a84f144559c6eeebeae8e6084411c7579cee9",
+        "version" : "1.0.9"
+      }
+    },
+    {
       "identity" : "logger",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/Logger",
