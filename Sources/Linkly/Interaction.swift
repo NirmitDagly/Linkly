@@ -54,7 +54,7 @@ class AuthConfiguration: ObservableObject {
     }
 }
 
-class Pairing: ObservableObject {
+final public class Pairing: ObservableObject {
     let terminalRepository: TerminalPairing
     
     init(repository: TerminalOperationRepository,
@@ -152,7 +152,7 @@ class TransactionConfiguration: ObservableObject {
     }
 }
 
-class TransactionInteraction: ObservableObject {
+final public class TransactionInteraction: ObservableObject {
     let transactionRepository: TransactionControl
     
     init(repository: TransactionControl,
