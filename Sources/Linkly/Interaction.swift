@@ -55,12 +55,12 @@ class AuthConfiguration: ObservableObject {
 }
 
 final public class Pairing: ObservableObject {
-    let terminalRepository: TerminalPairing
+    var terminalPairing: TerminalPairing
     
-    init(repository: TerminalOperationRepository,
-         isProductionMode mode: Bool
+    public init(repository: TerminalOperationRepository,
+                isProductionMode mode: Bool
     ) {
-        self.terminalRepository = TerminalPairing.init(apiClientService: AuthConfiguration.init(isProductionMode: mode).configuration.apiClientService)
+        self.terminalPairing = TerminalPairing.init(apiClientService: AuthConfiguration.init(isProductionMode: mode).configuration.apiClientService)
     }
     
     public func startPairing(withTerminalNumber terminalNumber: String,
@@ -68,7 +68,7 @@ final public class Pairing: ObservableObject {
                              andPassword password: String,
                              andPairingCode pairCode: String
     ) async {
-        async let getAuthSecret = terminalRepository.pairTerminal(withTerminalNumber: terminalNumber,
+        async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
                                                                   andUsername: username,
                                                                   andPassword: password,
                                                                   andPairingCode: pairCode
@@ -95,7 +95,7 @@ final public class Pairing: ObservableObject {
                                    andPOSID posID: String,
                                    andPOSVendorID vendorID: String
     ) async -> TokenDetails {
-        async let getAuthToken = terminalRepository.getAuthToken(withSecret: secret,
+        async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
                                                                  forPOS: posName,
                                                                  andPOSVersion: posVersion,
                                                                  andPOSID: posID,

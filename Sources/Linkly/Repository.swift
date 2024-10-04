@@ -10,7 +10,7 @@ import SwiftUI
 import Network
 import Logger
 
-protocol TerminalOperationRepository {
+public protocol TerminalOperationRepository {
     
     func pairTerminal(withTerminalNumber terminalNumber: String,
                       andUsername username: String,
@@ -24,7 +24,6 @@ protocol TerminalOperationRepository {
                       andPOSID posID: String,
                       andPOSVendorID vendorID: String
     ) async throws -> AuthTokenModel
-    
     
     func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus
     
