@@ -61,45 +61,37 @@ final public class Pairing: ObservableObject {
         self.terminalPairing = TerminalPairing.init(apiClientService: AuthConfiguration.init(isProductionMode: mode).configuration.apiClientService)
     }
     
-    public func startPairing(withTerminalNumber terminalNumber: String,
-                             andUsername username: String,
-                             andPassword password: String,
-                             andPairingCode pairCode: String
-    ) async {
-        async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
-                                                                  andUsername: username,
-                                                                  andPassword: password,
-                                                                  andPairingCode: pairCode
-        )
-        
-        guard let authSecretDetails = try? await getAuthSecret else {
-            return
-        }
-        print(authSecretDetails)
-        
-        Task {
-            await getLinklyAuthToken(withSecret: authSecretDetails.terminalSecret!,
-                                     forPOS: "Admin",
-                                     andPOSVersion: "1.0",
-                                     andPOSID: UIDevice.current.identifierForVendor!.uuidString.lowercased() as String,
-                                     andPOSVendorID: "QIKI"
-            )
-        }
-    }
-    
-    public func getLinklyAuthToken(withSecret secret: String,
+    public func getLinklyAuthToken(withTerminalNumber terminalNumber: String,
+                                   andUsername username: String,
+                                   andPassword password: String,
+                                   andPairingCode pairCode: String,
+                                   withSecret secret: String,
                                    forPOS posName: String,
                                    andPOSVersion posVersion: String,
                                    andPOSID posID: String,
                                    andPOSVendorID vendorID: String
     ) async -> TokenDetails {
-        async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
-                                                                 forPOS: posName,
-                                                                 andPOSVersion: posVersion,
-                                                                 andPOSID: posID,
-                                                                 andPOSVendorID: vendorID
+        async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
+                                                               andUsername: username,
+                                                               andPassword: password,
+                                                               andPairingCode: pairCode
         )
         
+        guard let authSecretDetails = try? await getAuthSecret else {
+            return TokenDetails(authSecret: "",
+                                authToken: "",
+                                tokenExpiryTime: 0
+            )
+        }
+        print(authSecretDetails)
+        
+        async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
+                                                              forPOS: posName,
+                                                              andPOSVersion: posVersion,
+                                                              andPOSID: posID,
+                                                              andPOSVendorID: vendorID
+        )
+            
         guard let authTokenDetails = try? await getAuthToken else {
             print("Unable to get auth token details... Hence, I am returning back.")
             return TokenDetails(authSecret: "",
@@ -107,14 +99,15 @@ final public class Pairing: ObservableObject {
                                 tokenExpiryTime: 0
             )
         }
-        
+            
         print(authTokenDetails)
         authSecret = secret
         authToken = authTokenDetails.token
+        tokenExpiryTime = authTokenDetails.expirySeconds
         
         return TokenDetails(authSecret: authSecret,
                             authToken: authToken,
-                            tokenExpiryTime: authTokenDetails.expirySeconds
+                            tokenExpiryTime: tokenExpiryTime
         )
     }
 }

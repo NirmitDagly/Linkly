@@ -14,4 +14,4 @@ var authSecret = ""
 
 var authToken = ""
 
-var tokenExpiryTime = ""
+var tokenExpiryTime = 0.00
