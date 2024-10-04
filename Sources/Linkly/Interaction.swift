@@ -65,7 +65,6 @@ final public class Pairing: ObservableObject {
                                    andUsername username: String,
                                    andPassword password: String,
                                    andPairingCode pairCode: String,
-                                   withSecret secret: String,
                                    forPOS posName: String,
                                    andPOSVersion posVersion: String,
                                    andPOSID posID: String,
@@ -85,7 +84,15 @@ final public class Pairing: ObservableObject {
         }
         print(authSecretDetails)
         
-        async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
+        guard authSecretDetails.terminalSecret != "" else {
+            print("Unable to get auth secret details... Hence, I am returning back.")
+            return TokenDetails(authSecret: "",
+                                authToken: "",
+                                tokenExpiryTime: 0
+            )
+        }
+        
+        async let getAuthToken = terminalPairing.getAuthToken(withSecret: authSecretDetails.terminalSecret!,
                                                               forPOS: posName,
                                                               andPOSVersion: posVersion,
                                                               andPOSID: posID,
@@ -101,7 +108,7 @@ final public class Pairing: ObservableObject {
         }
             
         print(authTokenDetails)
-        authSecret = secret
+        authSecret = authSecretDetails.terminalSecret!
         authToken = authTokenDetails.token
         tokenExpiryTime = authTokenDetails.expirySeconds
         
