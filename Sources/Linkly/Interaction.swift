@@ -57,9 +57,7 @@ class AuthConfiguration: ObservableObject {
 final public class Pairing: ObservableObject {
     var terminalPairing: TerminalPairing
     
-    public init(repository: TerminalOperationRepository,
-                isProductionMode mode: Bool
-    ) {
+    public init(isProductionMode mode: Bool) {
         self.terminalPairing = TerminalPairing.init(apiClientService: AuthConfiguration.init(isProductionMode: mode).configuration.apiClientService)
     }
     
