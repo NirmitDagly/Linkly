@@ -37,7 +37,7 @@ class APIEndPoints {
                              andPOSVendorID vendorID: String
     ) -> APIEndpoint {
         return .init(
-            path: "/v1/pairing/cloudpos",
+            path: "/v1/tokens/cloudpos",
             httpMethod: .post,
             bodyParameter: .dictionary(
                 [
