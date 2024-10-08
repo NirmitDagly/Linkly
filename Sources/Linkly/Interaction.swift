@@ -92,7 +92,7 @@ final public class Pairing: ObservableObject {
             )
         }
         
-        async let getAuthToken = terminalPairing.getAuthToken(withSecret: authSecretDetails.terminalSecret!,
+        async let getAuthToken = terminalPairing.getAuthToken(withSecret: authSecretDetails.terminalSecret,
                                                               forPOS: posName,
                                                               andPOSVersion: posVersion,
                                                               andPOSID: posID,
@@ -108,7 +108,7 @@ final public class Pairing: ObservableObject {
         }
             
         print(authTokenDetails)
-        authSecret = authSecretDetails.terminalSecret!
+        authSecret = authSecretDetails.terminalSecret
         authToken = authTokenDetails.token
         tokenExpiryTime = authTokenDetails.expirySeconds
         

@@ -10,9 +10,5 @@ import SwiftUI
 import Network
 
 public struct PairingModel: Codable {
-    public var terminalSerialNumber: String
-    public var terminalUserName: String
-    public var terminalPassword: String
-    public var terminalPairingCode: String?
-    public var terminalSecret: String?
+    public var terminalSecret: String
 }
