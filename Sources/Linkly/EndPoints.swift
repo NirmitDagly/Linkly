@@ -17,7 +17,7 @@ class APIEndPoints {
                                 andPairingCode pairCode: String
     ) -> APIEndpoint {
         return .init(
-            path: "v1/pairing/cloudpos",
+            path: "/v1/pairing/cloudpos",
             httpMethod: .post,
             bodyParameter: .dictionary(
                 [
@@ -37,7 +37,7 @@ class APIEndPoints {
                              andPOSVendorID vendorID: String
     ) -> APIEndpoint {
         return .init(
-            path: "v1/pairing/cloudpos",
+            path: "/v1/pairing/cloudpos",
             httpMethod: .post,
             bodyParameter: .dictionary(
                 [
