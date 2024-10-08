@@ -31,7 +31,7 @@ class AuthConfiguration: ObservableObject {
         print(logger)
 
         var apiClientService = APIClientService(logger: logger,
-                                                configuration: .init(baseURL: URL(string: "https://auth.sandbox.cloud.pceftpos.com/v1/pairing/cloudpos"),
+                                                configuration: .init(baseURL: URL(string: "https://auth.sandbox.cloud.pceftpos.com"),
                                                                      baseHeaders: ["Accept": "application/json",
                                                                                    "content-type": "application/json"
                                                                                   ]
@@ -40,7 +40,7 @@ class AuthConfiguration: ObservableObject {
 
         if prodMode == true {
             apiClientService = APIClientService(logger: logger,
-                                                    configuration: .init(baseURL: URL(string: "https://auth.cloud.pceftpos.com/v1/pairing/cloudpos"),
+                                                    configuration: .init(baseURL: URL(string: "https://auth.cloud.pceftpos.com"),
                                                                          baseHeaders: ["Accept": "application/json",
                                                                                        "content-type": "application/json"
                                                                                       ]
