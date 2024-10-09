@@ -244,7 +244,8 @@ final public class TransactionInteraction: ObservableObject {
                                                                       )
             )
         }
-        
+        print(pinpadStatus)
+
         return pinpadStatus
     }
 
