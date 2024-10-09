@@ -25,9 +25,6 @@ public protocol TerminalOperationRepository {
                       andPOSVendorID vendorID: String
     ) async throws -> AuthTokenModel
     
-    func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus
-    
-    func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon
 }
 
 public class TerminalPairing: TerminalOperationRepository {
@@ -69,25 +66,14 @@ public class TerminalPairing: TerminalOperationRepository {
             mapper: AuthTokenResponseMapper()
         )
     }
-
-    public func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus {
-        try await apiClientService.request(
-            APIEndPoints.checkTerminalStatus(withSessionID: sessionID),
-            mapper: TerminalStatusResponseMapper()
-        )
-    }
-    
-    public func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon {
-        try await apiClientService.request(
-            APIEndPoints.logonToPinpad(withSessionID: sessionID),
-            mapper: LogonResponseMapper()
-        )
-    }
 }
 
 
 protocol TransactionRepository {
+    func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus
     
+    func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon
+
     func initiateTransaction(withSessionID sessionID: String,
                              andMerchant merchant: String,
                              withTxnType txnType: String,
@@ -133,6 +119,20 @@ public class TransactionControl: TransactionRepository {
 
     public init(apiClientService: APIClientService) {
         self.apiClientService = apiClientService
+    }
+    
+    public func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus {
+        try await apiClientService.request(
+            APIEndPoints.checkTerminalStatus(withSessionID: sessionID),
+            mapper: TerminalStatusResponseMapper()
+        )
+    }
+    
+    public func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon {
+        try await apiClientService.request(
+            APIEndPoints.logonToPinpad(withSessionID: sessionID),
+            mapper: LogonResponseMapper()
+        )
     }
     
     public func initiateTransaction(withSessionID sessionID: String,

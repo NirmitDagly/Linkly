@@ -167,12 +167,12 @@ class TransactionConfiguration: ObservableObject {
 }
 
 final public class TransactionInteraction: ObservableObject {
-    let transactionRepository: TransactionControl
+    let transactionControl: TransactionControl
     
     init(repository: TransactionControl,
          isProductionMode mode: Bool
     ) {
-        self.transactionRepository = TransactionControl.init(apiClientService: TransactionConfiguration(isProductionMode: mode).configuration.apiClientService)
+        self.transactionControl = TransactionControl.init(apiClientService: TransactionConfiguration(isProductionMode: mode).configuration.apiClientService)
     }
     
     public func generateSessionID() -> String {
@@ -187,20 +187,70 @@ final public class TransactionInteraction: ObservableObject {
         txnRefNumber = txnRefNumber.replacingOccurrences(of: ":", with: "")
         return String(txnRefNumber.prefix(16))
     }
+    
+    public func checkPinpadStatus(withSessionID sessionId: String) async -> TerminalStatus {
+        async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
+            
+        guard let pinpadStatus = try? await checkPinpadStatus else {
+            print("Unable to get auth token details... Hence, I am returning back.")
+            return TerminalStatus(sessionID: sessionId,
+                                  responseType: "",
+                                  response: TerminalStatusDetails.init(merchant: "",
+                                                                       nii: 0,
+                                                                       catid: "",
+                                                                       caid: "",
+                                                                       timeout: 0,
+                                                                       loggedOn: false,
+                                                                       pinPadSerialNumber: "",
+                                                                       pinPadVersion: "",
+                                                                       bankCode: "",
+                                                                       bankDescription: "",
+                                                                       kvc: "",
+                                                                       safCount: 0,
+                                                                       networkType: "",
+                                                                       hardwareSerial: "",
+                                                                       retailerName: "",
+                                                                       optionsFlags: ["optionsFlags": false],
+                                                                       safCreditLimit: 0,
+                                                                       safDebitLimit: 0,
+                                                                       maxSAF: 0,
+                                                                       keyHandlingScheme: "",
+                                                                       cashoutLimit: 0,
+                                                                       refundLimit: 0,
+                                                                       cpatVersion: "",
+                                                                       nameTableVersion: "",
+                                                                       terminalCommsType: "",
+                                                                       cardMisreadCount: 0,
+                                                                       totalMemoryInTerminal: 0,
+                                                                       freeMemoryInTerminal: 0,
+                                                                       eftTerminalType: "",
+                                                                       numAppsInTerminal: 0,
+                                                                       numLinesOnDisplay: 0,
+                                                                       hardwareInceptionDate: "",
+                                                                       success: false,
+                                                                       responseCode: "",
+                                                                       responseText: "Failed"
+                                                                      )
+            )
+        }
+        
+        return pinpadStatus
+    }
+
 
     public func initiatePaymentWithLinkly(forPurchaseAmount amount: String) async -> String {
-        async let getTransactionResponse = transactionRepository.initiateTransaction(withSessionID: generateSessionID(),
-                                                                                     andMerchant: "00",
-                                                                                     withTxnType: "P",
-                                                                                     forPurchaseAmount: amount,
-                                                                                     withTxnRefNumber: getTransactionReferenceNumber(),
-                                                                                     andCurrencyCode: "AUD",
-                                                                                     withCutReceiptOption: "0",
-                                                                                     onApplication: "00",
-                                                                                     withTipEnabled: 1,
-                                                                                     andShouldAutoPrintReceipt: "7",
-                                                                                     andPurchaseAnalysisData: ["AMT": amount,
-                                                                                                               "PCM": "0000"] as [String: Any]
+        async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: generateSessionID(),
+                                                                                  andMerchant: "00",
+                                                                                  withTxnType: "P",
+                                                                                  forPurchaseAmount: amount,
+                                                                                  withTxnRefNumber: getTransactionReferenceNumber(),
+                                                                                  andCurrencyCode: "AUD",
+                                                                                  withCutReceiptOption: "0",
+                                                                                  onApplication: "00",
+                                                                                  withTipEnabled: 1,
+                                                                                  andShouldAutoPrintReceipt: "7",
+                                                                                  andPurchaseAnalysisData: ["AMT": amount,
+                                                                                                            "PCM": "0000"] as [String: Any]
         )
         
         guard let transactionResponseDetails = try? await getTransactionResponse else {
