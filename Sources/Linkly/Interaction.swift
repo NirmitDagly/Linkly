@@ -186,7 +186,8 @@ final public class TransactionInteraction: ObservableObject {
         return String(txnRefNumber.prefix(16))
     }
     
-    public func checkPinpadStatus(withSessionID sessionId: String) async -> TerminalStatus {
+    public func checkPinpadStatus() async -> TerminalStatus {
+        let sessionId = generateSessionID()
         async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
             
         guard let pinpadStatus = try? await checkPinpadStatus else {
@@ -234,7 +235,6 @@ final public class TransactionInteraction: ObservableObject {
         
         return pinpadStatus
     }
-
 
     public func initiatePaymentWithLinkly(forPurchaseAmount amount: String) async -> String {
         async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: generateSessionID(),
