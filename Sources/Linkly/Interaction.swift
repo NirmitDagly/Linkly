@@ -148,7 +148,7 @@ class LinklyTransactionConfiguration: ObservableObject {
 }
 
 class TransactionConfiguration: ObservableObject {
-    var configuration: LinklyTransactionConfiguration
+    let configuration: LinklyTransactionConfiguration
     
     init(isProductionMode prodMode: Bool) {
         let logger = Logger(label: "Qiki POS")
@@ -179,7 +179,7 @@ class TransactionConfiguration: ObservableObject {
 }
 
 final public class TransactionInteraction: ObservableObject {
-    let transactionControl: TransactionControl
+    var transactionControl: TransactionControl
     
     public init(isProductionMode mode: Bool) {
         self.transactionControl = TransactionControl.init(apiClientService: TransactionConfiguration(isProductionMode: mode).configuration.apiClientService)
