@@ -169,9 +169,7 @@ class TransactionConfiguration: ObservableObject {
 final public class TransactionInteraction: ObservableObject {
     let transactionControl: TransactionControl
     
-    init(repository: TransactionControl,
-         isProductionMode mode: Bool
-    ) {
+    init(isProductionMode mode: Bool) {
         self.transactionControl = TransactionControl.init(apiClientService: TransactionConfiguration(isProductionMode: mode).configuration.apiClientService)
     }
     
