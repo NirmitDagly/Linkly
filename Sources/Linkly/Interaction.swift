@@ -135,8 +135,20 @@ final public class Pairing: ObservableObject {
     }
 }
 
+class LinklyTransactionConfiguration: ObservableObject {
+    let logger: Logger
+    let apiClientService: APIClientService
+    
+    init(logger: Logger,
+         apiClientService: APIClientService
+    ) {
+        self.logger = logger
+        self.apiClientService = apiClientService
+    }
+}
+
 class TransactionConfiguration: ObservableObject {
-    let configuration: LinklyConfiguration
+    let configuration: LinklyTransactionConfiguration
     
     init(isProductionMode prodMode: Bool) {
         let logger = Logger(label: "Qiki POS")
@@ -191,7 +203,7 @@ final public class TransactionInteraction: ObservableObject {
         async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
             
         guard let pinpadStatus = try? await checkPinpadStatus else {
-            print("Unable to get auth token details... Hence, I am returning back.")
+            print("Unable to check connection between Pinpad and POS. Hence, I am returning back.")
             return TerminalStatus(sessionID: sessionId,
                                   responseType: "",
                                   response: TerminalStatusDetails.init(merchant: "",
