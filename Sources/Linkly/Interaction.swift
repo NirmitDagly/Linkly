@@ -61,7 +61,7 @@ final public class Pairing: ObservableObject {
         self.terminalPairing = TerminalPairing.init(apiClientService: AuthConfiguration.init(isProductionMode: mode).configuration.apiClientService)
     }
     
-    public func getLinklyAuthToken(withTerminalNumber terminalNumber: String,
+    public func initiatePairing(withTerminalNumber terminalNumber: String,
                                    andUsername username: String,
                                    andPassword password: String,
                                    andPairingCode pairCode: String,
@@ -92,7 +92,23 @@ final public class Pairing: ObservableObject {
             )
         }
         
-        async let getAuthToken = terminalPairing.getAuthToken(withSecret: authSecretDetails.terminalSecret,
+        async let tokenDetails = getLinklyAuthToken(withSecret: authSecretDetails.terminalSecret,
+                                                    forPOS: posName,
+                                                    andPOSVersion: posVersion,
+                                                    andPOSID: posID,
+                                                    andPOSVendorID: vendorID
+        )
+        
+        return await tokenDetails
+    }
+    
+    public func getLinklyAuthToken(withSecret secret: String,
+                                   forPOS posName: String,
+                                   andPOSVersion posVersion: String,
+                                   andPOSID posID: String,
+                                   andPOSVendorID vendorID: String
+    ) async -> TokenDetails {
+        async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
                                                               forPOS: posName,
                                                               andPOSVersion: posVersion,
                                                               andPOSID: posID,
@@ -108,7 +124,7 @@ final public class Pairing: ObservableObject {
         }
             
         print(authTokenDetails)
-        authSecret = authSecretDetails.terminalSecret
+        authSecret = secret
         authToken = authTokenDetails.token
         tokenExpiryTime = authTokenDetails.expirySeconds
         
