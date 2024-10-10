@@ -31,7 +31,7 @@ class AuthConfiguration: ObservableObject {
         print(logger)
 
         var apiClientService = APIClientService(logger: logger,
-                                                configuration: .init(baseURL: URL(string: "https://auth.sandbox.cloud.pceftpos.com"),
+                                                configuration: .init(baseURL: URL(string: "auth.sandbox.cloud.pceftpos.com"),
                                                                      baseHeaders: ["Accept": "application/json",
                                                                                    "content-type": "application/json"
                                                                                   ]
@@ -40,7 +40,7 @@ class AuthConfiguration: ObservableObject {
 
         if prodMode == true {
             apiClientService = APIClientService(logger: logger,
-                                                    configuration: .init(baseURL: URL(string: "https://auth.cloud.pceftpos.com"),
+                                                    configuration: .init(baseURL: URL(string: "auth.cloud.pceftpos.com"),
                                                                          baseHeaders: ["Accept": "application/json",
                                                                                        "content-type": "application/json"
                                                                                       ]
@@ -155,7 +155,7 @@ class TransactionConfiguration: ObservableObject {
         print(logger)
 
         var apiClientService = APIClientService(logger: logger,
-                                                configuration: .init(baseURL: URL(string: "https://rest.pos.sandbox.cloud.pceftpos.com/v1/sessions/"),
+                                                configuration: .init(baseURL: URL(string: "rest.pos.sandbox.cloud.pceftpos.com"),
                                                                      baseHeaders: ["Accept": "application/json",
                                                                                    "content-type": "application/json"
                                                                                   ]
@@ -164,7 +164,7 @@ class TransactionConfiguration: ObservableObject {
 
         if prodMode == true {
             apiClientService = APIClientService(logger: logger,
-                                                    configuration: .init(baseURL: URL(string: "https://rest.pos.cloud.pceftpos.com/v1/sessions/"),
+                                                    configuration: .init(baseURL: URL(string: "rest.pos.cloud.pceftpos.com"),
                                                                          baseHeaders: ["Accept": "application/json",
                                                                                        "content-type": "application/json"
                                                                                       ]
