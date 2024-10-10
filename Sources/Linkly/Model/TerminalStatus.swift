@@ -16,24 +16,24 @@ public struct TerminalStatus: Codable {
 
 // MARK: - Terminal Status Details
 public struct TerminalStatusDetails: Codable {
-    let merchant: String
-    let nii: Int
-    let catid, caid: String
-    let timeout: Int
-    let loggedOn: Bool
-    let pinPadSerialNumber, pinPadVersion, bankCode, bankDescription: String
-    let kvc: String
-    let safCount: Int
-    let networkType, hardwareSerial, retailerName: String
-    let optionsFlags: [String: Bool]
-    let safCreditLimit, safDebitLimit, maxSAF: Int
-    let keyHandlingScheme: String
-    let cashoutLimit, refundLimit: Int
-    let cpatVersion, nameTableVersion, terminalCommsType: String
-    let cardMisreadCount, totalMemoryInTerminal, freeMemoryInTerminal: Int
-    let eftTerminalType: String
-    let numAppsInTerminal, numLinesOnDisplay: Int
-    let hardwareInceptionDate: String
-    let success: Bool
-    let responseCode, responseText: String
+    public let merchant: String
+    public let nii: Int
+    public let catid, caid: String
+    public let timeout: Int
+    public let loggedOn: Bool
+    public let pinPadSerialNumber, pinPadVersion, bankCode, bankDescription: String
+    public let kvc: String
+    public let safCount: Int
+    public let networkType, hardwareSerial, retailerName: String
+    public let optionsFlags: [String: Bool]
+    public let safCreditLimit, safDebitLimit, maxSAF: Int
+    public let keyHandlingScheme: String
+    public let cashoutLimit, refundLimit: Int
+    public let cpatVersion, nameTableVersion, terminalCommsType: String
+    public let cardMisreadCount, totalMemoryInTerminal, freeMemoryInTerminal: Int
+    public let eftTerminalType: String
+    public let numAppsInTerminal, numLinesOnDisplay: Int
+    public let hardwareInceptionDate: String
+    public let success: Bool
+    public let responseCode, responseText: String
 }
