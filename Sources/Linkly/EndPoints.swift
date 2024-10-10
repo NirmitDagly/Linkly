@@ -55,7 +55,7 @@ class APIEndPoints {
     static func checkTerminalStatus(withSessionID sessionID: String) -> APIEndpoint {
         return .init(
             path: "\(sessionID)/status?async=false",
-            httpMethod: .get,
+            httpMethod: .post,
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
