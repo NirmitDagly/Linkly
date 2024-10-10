@@ -181,8 +181,11 @@ class TransactionConfiguration: ObservableObject {
 final public class TransactionInteraction: ObservableObject {
     var transactionControl: TransactionControl
     
-    public init(isProductionMode mode: Bool) {
+    public init(isProductionMode mode: Bool,
+                andAuthToken token: String
+    ) {
         self.transactionControl = TransactionControl.init(apiClientService: TransactionConfiguration(isProductionMode: mode).configuration.apiClientService)
+        authToken = token
     }
     
     public func generateSessionID() -> String {
