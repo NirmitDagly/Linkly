@@ -65,7 +65,7 @@ class APIEndPoints {
                         "merchant": "00",
                         "application": "00",
                         "statusType": "0"
-                    ]
+                    ] as [String: Any]
                 ],
                 options: .prettyPrinted
             )
