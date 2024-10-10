@@ -54,8 +54,9 @@ class APIEndPoints {
     
     static func checkTerminalStatus(withSessionID sessionID: String) -> APIEndpoint {
         return .init(
-            path: "/v1/sessions/\(sessionID)/status?async=false",
+            path: "/v1/sessions/\(sessionID)/status",
             httpMethod: .post,
+            urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
@@ -74,8 +75,9 @@ class APIEndPoints {
     
     static func logonToPinpad(withSessionID sessionID: String) -> APIEndpoint {
         return .init(
-            path: "/v1/sessions/\(sessionID)/logon?async=false",
-            httpMethod: .get,
+            path: "/v1/sessions/\(sessionID)/logon",
+            httpMethod: .post,
+            urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
@@ -107,8 +109,9 @@ class APIEndPoints {
                                     andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
     ) -> APIEndpoint {
         return .init(
-            path: "\(sessionID)/transaction?async=false",
+            path: "\(sessionID)/transaction",
             httpMethod: .post,
+            urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
