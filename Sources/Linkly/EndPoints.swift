@@ -109,7 +109,7 @@ class APIEndPoints {
                                     andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
     ) -> APIEndpoint {
         return .init(
-            path: "\(sessionID)/transaction",
+            path: "/v1/sessions/\(sessionID)/transaction",
             httpMethod: .post,
             urlQueries: ["async": "false"],
             headers: [
@@ -137,8 +137,9 @@ class APIEndPoints {
     
     static func cancelTransaction(forSessionID sessionID: String) -> APIEndpoint {
         return .init(
-            path: "\(sessionID)/sendkey?async=false",
+            path: "/v1/sessions/\(sessionID)/sendkey",
             httpMethod: .post,
+            urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
@@ -167,8 +168,9 @@ class APIEndPoints {
                                andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
     ) -> APIEndpoint {
         return .init(
-            path: "\(sessionID)/transaction?async=false",
+            path: "/v1/sessions/\(sessionID)/transaction",
             httpMethod: .post,
+            urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
@@ -193,8 +195,9 @@ class APIEndPoints {
     
     static func getTransactionStatus(forSessionID sessionID: String) -> APIEndpoint {
         return .init(
-            path: "\(sessionID)/transaction",
+            path: "/v1/sessions/\(sessionID)/transaction",
             httpMethod: .get,
+            urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
@@ -212,8 +215,9 @@ class APIEndPoints {
                                       andReceiptReprintType reprintType: String
     ) -> APIEndpoint {
         return .init(
-            path: "\(sessionID)/ReprintReceipt?async=false",
+            path: "/v1/sessions/\(sessionID)/ReprintReceipt?async=false",
             httpMethod: .post,
+            urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
             ],
