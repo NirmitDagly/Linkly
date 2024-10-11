@@ -188,21 +188,7 @@ final public class TransactionInteraction: ObservableObject {
         authToken = token
     }
     
-    public func generateSessionID() -> String {
-        return NSUUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
-    }
-    
-    public func getTransactionReferenceNumber() -> String {
-        var txnRefNumber = "\(1)" + "-" + Date().toString(format: "dd/MM/yyyy hh:mm:ss")
-        txnRefNumber = txnRefNumber.replacingOccurrences(of: "/", with: "")
-        txnRefNumber = txnRefNumber.replacingOccurrences(of: "-", with: "")
-        txnRefNumber = txnRefNumber.replacingOccurrences(of: " ", with: "")
-        txnRefNumber = txnRefNumber.replacingOccurrences(of: ":", with: "")
-        return String(txnRefNumber.prefix(16))
-    }
-    
-    public func checkPinpadStatus() async -> TerminalStatus {
-        let sessionId = generateSessionID()
+    public func checkPinpadStatus(withSessionId sessionId: String) async -> TerminalStatus {
         async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
             
         guard let pinpadStatus = try? await checkPinpadStatus else {
@@ -252,12 +238,15 @@ final public class TransactionInteraction: ObservableObject {
         return pinpadStatus
     }
 
-    public func initiatePaymentWithLinkly(forPurchaseAmount amount: String) async -> String {
-        async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: generateSessionID(),
+    public func initiatePaymentWithLinkly(withSessionId sessionId: String,
+                                          forPurchaseAmount amount: String,
+                                          andTxnRefNumber txnRefNumber: String
+    ) async -> String {
+        async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: sessionId,
                                                                                   andMerchant: "00",
                                                                                   withTxnType: "P",
                                                                                   forPurchaseAmount: amount,
-                                                                                  withTxnRefNumber: getTransactionReferenceNumber(),
+                                                                                  withTxnRefNumber: txnRefNumber,
                                                                                   andCurrencyCode: "AUD",
                                                                                   withCutReceiptOption: "0",
                                                                                   onApplication: "00",
@@ -274,5 +263,19 @@ final public class TransactionInteraction: ObservableObject {
         
         print(transactionResponseDetails)
         return "Approved"
+    }
+    
+    public func cancelPaymentWithLinkly(withSessionId sessionId: String,
+                                        andTxnRefNumber txnRefNumber: String
+    ) async -> String {
+        async let getTransactionResponse = transactionControl.cancelTransaction(forSessionID: sessionId)
+        
+        guard let transactionResponseDetails = try? await getTransactionResponse else {
+            print("Transaction cancellation request got failed...")
+            return "Failed"
+        }
+        
+        print(transactionResponseDetails)
+        return "Ok"
     }
 }
