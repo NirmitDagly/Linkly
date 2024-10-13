@@ -262,7 +262,7 @@ final public class TransactionInteraction: ObservableObject {
         }
         
         print(transactionResponseDetails)
-        return "Approved"
+        return transactionResponseDetails.linklyTransaction.responseText
     }
     
     public func cancelPaymentWithLinkly(withSessionId sessionId: String,
@@ -276,6 +276,10 @@ final public class TransactionInteraction: ObservableObject {
         }
         
         print(transactionResponseDetails)
-        return "Ok"
+        guard transactionResponseDetails.response != "" else {
+            return "Ok"
+        }
+        
+        return transactionResponseDetails.response!
     }
 }
