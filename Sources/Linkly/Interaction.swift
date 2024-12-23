@@ -241,7 +241,7 @@ final public class TransactionInteraction: ObservableObject {
     public func initiatePaymentWithLinkly(withSessionId sessionId: String,
                                           forPurchaseAmount amount: String,
                                           andTxnRefNumber txnRefNumber: String
-    ) async -> String {
+    ) async -> TransactionModel {
         async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: sessionId,
                                                                                   andMerchant: "00",
                                                                                   withTxnType: "P",
@@ -256,13 +256,45 @@ final public class TransactionInteraction: ObservableObject {
                                                                                                             "PCM": "0000"] as [String: Any]
         )
         
-        guard let transactionResponseDetails = try? await getTransactionResponse else {
+        guard var transactionResponseDetails = try? await getTransactionResponse else {
             print("Transaction declined...")
-            return "This is test message..."
+            return demoTransactionModel
         }
         
         print(transactionResponseDetails)
-        return transactionResponseDetails.linklyTransaction.responseText
+        
+        async let getTransctionReceiptResponse = transactionControl.getTransactionReceipts(withSessionID: sessionId,
+                                                                                           andMerchant: "00",
+                                                                                           withTxnRefNumber: txnRefNumber,
+                                                                                           onApplication: "00",
+                                                                                           andShouldAutoPrintReceipt: "7",
+                                                                                           andReceiptReprintType: "1"
+        )
+        
+        guard let transactionReceiptResponseDetails  = try? await getTransctionReceiptResponse else {
+            print("Unable to get transaction receipts...")
+            return transactionResponseDetails
+        }
+        
+        //Get receipt for transaction. Only merchant receipt will be received in response
+        //If response fails, then return the transaction model response without receipt(s)
+        let receiptText = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
+                                                    receiptText: transactionReceiptResponseDetails.response.receiptText
+        )
+        transactionResponseDetails.linklyTransaction.receipts?.append(receiptText)
+        
+        //Get the receipt updated for merchant
+        var receiptTextToUpdate = receiptText.receiptText.joined(separator: ",")
+        receiptTextToUpdate = receiptTextToUpdate.replacingOccurrences(of: "MERCHANT",
+                                                                       with: "CUSTOMER"
+        )
+        
+        let updatedReceipt = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
+                                                       receiptText: receiptTextToUpdate.components(separatedBy: ",")
+        )
+        transactionResponseDetails.linklyTransaction.receipts?.append(updatedReceipt)
+        
+        return transactionResponseDetails
     }
     
     public func cancelPaymentWithLinkly(withSessionId sessionId: String,
