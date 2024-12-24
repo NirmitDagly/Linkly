@@ -188,6 +188,21 @@ final public class TransactionInteraction: ObservableObject {
         authToken = token
     }
     
+    public func generateSessionID() -> String {
+        return NSUUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
+    }
+    
+    public func getTransactionReferenceNumber() -> String {
+        var txnRefNumber = "\(1)" + "-" + Date().toString(format: "dd/MM/yyyy hh:mm:ss")
+        txnRefNumber = txnRefNumber.replacingOccurrences(of: "/", with: "")
+        txnRefNumber = txnRefNumber.replacingOccurrences(of: "-", with: "")
+        txnRefNumber = txnRefNumber.replacingOccurrences(of: " ", with: "")
+        txnRefNumber = txnRefNumber.replacingOccurrences(of: ":", with: "")
+        return String(txnRefNumber.prefix(16))
+    }
+}
+
+extension TransactionInteraction {
     public func checkPinpadStatus(withSessionId sessionId: String) async -> TerminalStatus {
         async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
             
@@ -263,36 +278,8 @@ final public class TransactionInteraction: ObservableObject {
         
         print(transactionResponseDetails)
         
-        async let getTransctionReceiptResponse = transactionControl.getTransactionReceipts(withSessionID: sessionId,
-                                                                                           andMerchant: "00",
-                                                                                           withTxnRefNumber: txnRefNumber,
-                                                                                           onApplication: "00",
-                                                                                           andShouldAutoPrintReceipt: "7",
-                                                                                           andReceiptReprintType: "1"
-        )
-        
-        guard let transactionReceiptResponseDetails  = try? await getTransctionReceiptResponse else {
-            print("Unable to get transaction receipts...")
-            return transactionResponseDetails
-        }
-        
-        //Get receipt for transaction. Only merchant receipt will be received in response
-        //If response fails, then return the transaction model response without receipt(s)
-        let receiptText = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
-                                                    receiptText: transactionReceiptResponseDetails.response.receiptText
-        )
-        transactionResponseDetails.linklyTransaction.receipts?.append(receiptText)
-        
-        //Get the receipt updated for merchant
-        var receiptTextToUpdate = receiptText.receiptText.joined(separator: ",")
-        receiptTextToUpdate = receiptTextToUpdate.replacingOccurrences(of: "MERCHANT",
-                                                                       with: "CUSTOMER"
-        )
-        
-        let updatedReceipt = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
-                                                       receiptText: receiptTextToUpdate.components(separatedBy: ",")
-        )
-        transactionResponseDetails.linklyTransaction.receipts?.append(updatedReceipt)
+        async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+        transactionResponseDetails.linklyTransaction.receipts = await getTransactionReceipt
         
         return transactionResponseDetails
     }
@@ -313,5 +300,41 @@ final public class TransactionInteraction: ObservableObject {
         }
         
         return transactionResponseDetails.response!
+    }
+    
+    public func getTransactionReceipt(forTxnRefNumber txnRefNumber: String) async -> [LinklyTransactionReceipts] {
+        var linklyReceipts = [LinklyTransactionReceipts]()
+        async let getTransctionReceiptResponse = transactionControl.getTransactionReceipts(withSessionID: generateSessionID(),
+                                                                                           andMerchant: "00",
+                                                                                           withTxnRefNumber: txnRefNumber,
+                                                                                           onApplication: "00",
+                                                                                           andShouldAutoPrintReceipt: "7",
+                                                                                           andReceiptReprintType: "1"
+        )
+        
+        guard let transactionReceiptResponseDetails  = try? await getTransctionReceiptResponse else {
+            print("Unable to get transaction receipts...")
+            return linklyReceipts
+        }
+        
+        //Get receipt for transaction. Only merchant receipt will be received in response
+        //If response fails, then return the transaction model response without receipt(s)
+        let receiptText = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
+                                                    receiptText: transactionReceiptResponseDetails.response.receiptText
+        )
+        linklyReceipts.append(receiptText)
+        
+        //Get the receipt updated for merchant
+        var receiptTextToUpdate = receiptText.receiptText.joined(separator: ",")
+        receiptTextToUpdate = receiptTextToUpdate.replacingOccurrences(of: "MERCHANT",
+                                                                       with: "CUSTOMER"
+        )
+        
+        let updatedReceipt = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
+                                                       receiptText: receiptTextToUpdate.components(separatedBy: ",")
+        )
+        linklyReceipts.append(updatedReceipt)
+        
+        return linklyReceipts
     }
 }
