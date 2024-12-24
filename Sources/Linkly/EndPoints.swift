@@ -215,7 +215,7 @@ class APIEndPoints {
                                       andReceiptReprintType reprintType: String
     ) -> APIEndpoint {
         return .init(
-            path: "/v1/sessions/\(sessionID)/ReprintReceipt?async=false",
+            path: "/v1/sessions/\(sessionID)/reprintreceipt",
             httpMethod: .post,
             urlQueries: ["async": "false"],
             headers: [
