@@ -284,6 +284,38 @@ extension TransactionInteraction {
         return transactionResponseDetails
     }
     
+    public func refundPaymentWithLinkly(withSessionId sessionId: String,
+                                        forRefundAmount amount: String,
+                                        andTxnRefNumber txnRefNumber: String
+    ) async -> Refund {
+        async let getRefundResponse = transactionControl.refundTransaction(withSessionID: sessionId,
+                                                                           andMerchant: "00",
+                                                                           withTxnType: "R",
+                                                                           forRefundAmount: amount,
+                                                                           withTxnRefNumber: txnRefNumber,
+                                                                           andCurrencyCode: "AUD",
+                                                                           withCutReceiptOption: "0",
+                                                                           onApplication: "00",
+                                                                           withTipEnabled: 1,
+                                                                           andShouldAutoPrintReceipt: "7",
+                                                                           andPurchaseAnalysisData: ["AMT": amount,
+                                                                                                     "PCM": "0000"] as [String: Any]
+        )
+        
+        guard var refundResponseDetails = try? await getRefundResponse else {
+            print("Refund declined...")
+            return demoRefundModel
+        }
+        
+        print(refundResponseDetails)
+        
+        async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+        refundResponseDetails.linklyRefund.receipts = await getRefundReceipt
+        
+        return refundResponseDetails
+        
+    }
+    
     public func cancelPaymentWithLinkly(withSessionId sessionId: String,
                                         andTxnRefNumber txnRefNumber: String
     ) async -> String {

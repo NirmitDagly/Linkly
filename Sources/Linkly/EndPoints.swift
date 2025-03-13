@@ -158,7 +158,7 @@ class APIEndPoints {
     static func initiateRefund(withSessionID sessionID: String,
                                andMerchant merchant: String,
                                withTxnType txnType: String,
-                               forPurchaseAmount amount: String,
+                               forRefundAmount amount: String,
                                withTxnRefNumber txnRefNumber: String,
                                andCurrencyCode currencyCode: String,
                                withCutReceiptOption cutReceipt: String,
