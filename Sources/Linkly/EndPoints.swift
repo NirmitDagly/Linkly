@@ -235,4 +235,15 @@ class APIEndPoints {
             )
         )
     }
+    
+    static func getTransactionProgressStatus(forSessionID sessionID: String) -> APIEndpoint {
+        return .init(
+            path: "/v1/sessions/\(sessionID)/transaction",
+            httpMethod: .get,
+            urlQueries: ["async": "false"],
+            headers: [
+                "Authorization": "Bearer \(authToken)"
+            ]
+        )
+    }
 }

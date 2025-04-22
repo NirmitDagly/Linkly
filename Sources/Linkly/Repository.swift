@@ -111,6 +111,7 @@ protocol TransactionRepository {
                                 andShouldAutoPrintReceipt autoPrintReceipt: String,
                                 andReceiptReprintType reprintType: String
     ) async throws -> TransactionReceipt
+    func getTransactionProgress(forSessionID sessionID: String) async throws -> TransactionModel
 }
 
 public class TransactionControl: TransactionRepository {
@@ -224,6 +225,13 @@ public class TransactionControl: TransactionRepository {
                                                andReceiptReprintType: reprintType
                                               ),
             mapper: TransactionReceiptResponseMapper()
+        )
+    }
+    
+    public func getTransactionProgress(forSessionID sessionID: String) async throws -> TransactionModel {
+        try await apiClientService.request(
+            APIEndPoints.getTransactionProgressStatus(forSessionID: sessionID),
+            mapper: TransactionModelResponseMapper()
         )
     }
 }

@@ -369,4 +369,25 @@ extension TransactionInteraction {
         
         return linklyReceipts
     }
+    
+    public func startTransactionProgressTimer(forSessionID sessionID: String) {
+        if transactionProgressTimer == nil {
+            transactionProgressTimer = Timer.scheduledTimer(withTimeInterval: 90,
+                                                            repeats: true
+            ) { [weak self] _ in
+                //Stop observing the current request.
+                //Invalidate the current transaction progress timer.
+                //Initiate a new request.
+                Task { 
+                    await self?.getTransactionProgressStatus(forSessionID: sessionID)
+                }
+            }
+        }
+    }
+    
+    public func getTransactionProgressStatus(forSessionID sessionID: String) async -> TransactionModel {
+        async let getTransactionResponse = transactionControl.getTransactionProgress(forSessionID: sessionID)
+        
+        return demoTransactionModel
+    }
 }

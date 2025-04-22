@@ -111,3 +111,5 @@ var demoRefundModel = Refund(linklyRefundSessionID: "",
                                                              receipts: [LinklyTransactionReceipts]()
                                                             )
 )
+
+var transactionProgressTimer: Timer?
