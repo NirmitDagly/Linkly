@@ -69,37 +69,44 @@ final public class Pairing: ObservableObject {
                                    andPOSVersion posVersion: String,
                                    andPOSID posID: String,
                                    andPOSVendorID vendorID: String
-    ) async -> TokenDetails {
-        async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
-                                                               andUsername: username,
-                                                               andPassword: password,
-                                                               andPairingCode: pairCode
-        )
-        
-        guard let authSecretDetails = try? await getAuthSecret else {
-            return TokenDetails(authSecret: "",
-                                authToken: "",
-                                tokenExpiryTime: 0
+    ) async throws -> TokenDetails {
+        do {
+            async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
+                                                                   andUsername: username,
+                                                                   andPassword: password,
+                                                                   andPairingCode: pairCode
             )
-        }
-        print(authSecretDetails)
-        
-        guard authSecretDetails.terminalSecret != "" else {
-            print("Unable to get auth secret details... Hence, I am returning back.")
-            return TokenDetails(authSecret: "",
-                                authToken: "",
-                                tokenExpiryTime: 0
+            
+            let authSecretDetails = try await getAuthSecret
+            print(authSecretDetails)
+            
+            guard authSecretDetails.terminalSecret != "" else {
+                print("Unable to get auth secret details... Hence, I am returning back.")
+                return TokenDetails(authSecret: "",
+                                    authToken: "",
+                                    tokenExpiryTime: 0
+                )
+            }
+            
+            async let tokenDetails = getLinklyAuthToken(withSecret: authSecretDetails.terminalSecret,
+                                                        forPOS: posName,
+                                                        andPOSVersion: posVersion,
+                                                        andPOSID: posID,
+                                                        andPOSVendorID: vendorID
             )
+            
+            return try await tokenDetails
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch APIError.unknown {
+            throw APIError.unknown
         }
-        
-        async let tokenDetails = getLinklyAuthToken(withSecret: authSecretDetails.terminalSecret,
-                                                    forPOS: posName,
-                                                    andPOSVersion: posVersion,
-                                                    andPOSID: posID,
-                                                    andPOSVendorID: vendorID
-        )
-        
-        return await tokenDetails
     }
     
     public func getLinklyAuthToken(withSecret secret: String,
@@ -107,31 +114,37 @@ final public class Pairing: ObservableObject {
                                    andPOSVersion posVersion: String,
                                    andPOSID posID: String,
                                    andPOSVendorID vendorID: String
-    ) async -> TokenDetails {
-        async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
-                                                              forPOS: posName,
-                                                              andPOSVersion: posVersion,
-                                                              andPOSID: posID,
-                                                              andPOSVendorID: vendorID
-        )
-            
-        guard let authTokenDetails = try? await getAuthToken else {
-            print("Unable to get auth token details... Hence, I am returning back.")
-            return TokenDetails(authSecret: "",
-                                authToken: "",
-                                tokenExpiryTime: 0
+    ) async throws -> TokenDetails {
+        do {
+            async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
+                                                                  forPOS: posName,
+                                                                  andPOSVersion: posVersion,
+                                                                  andPOSID: posID,
+                                                                  andPOSVendorID: vendorID
             )
-        }
             
-        print(authTokenDetails)
-        authSecret = secret
-        authToken = authTokenDetails.token
-        tokenExpiryTime = authTokenDetails.expirySeconds
-        
-        return TokenDetails(authSecret: authSecret,
-                            authToken: authToken,
-                            tokenExpiryTime: tokenExpiryTime
-        )
+            let authTokenDetails = try await getAuthToken
+            
+            print(authTokenDetails)
+            authSecret = secret
+            authToken = authTokenDetails.token
+            tokenExpiryTime = authTokenDetails.expirySeconds
+            
+            return TokenDetails(authSecret: authSecret,
+                                authToken: authToken,
+                                tokenExpiryTime: tokenExpiryTime
+            )
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch APIError.unknown {
+            throw APIError.unknown
+        }
     }
 }
 
