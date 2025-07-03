@@ -69,37 +69,44 @@ final public class Pairing: ObservableObject {
                                    andPOSVersion posVersion: String,
                                    andPOSID posID: String,
                                    andPOSVendorID vendorID: String
-    ) async -> TokenDetails {
-        async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
-                                                               andUsername: username,
-                                                               andPassword: password,
-                                                               andPairingCode: pairCode
-        )
-        
-        guard let authSecretDetails = try? await getAuthSecret else {
-            return TokenDetails(authSecret: "",
-                                authToken: "",
-                                tokenExpiryTime: 0
+    ) async throws -> TokenDetails {
+        do {
+            async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
+                                                                   andUsername: username,
+                                                                   andPassword: password,
+                                                                   andPairingCode: pairCode
             )
-        }
-        print(authSecretDetails)
-        
-        guard authSecretDetails.terminalSecret != "" else {
-            print("Unable to get auth secret details... Hence, I am returning back.")
-            return TokenDetails(authSecret: "",
-                                authToken: "",
-                                tokenExpiryTime: 0
+            
+            let authSecretDetails = try await getAuthSecret
+            print(authSecretDetails)
+            
+            guard authSecretDetails.terminalSecret != "" else {
+                print("Unable to get auth secret details... Hence, I am returning back.")
+                return TokenDetails(authSecret: "",
+                                    authToken: "",
+                                    tokenExpiryTime: 0
+                )
+            }
+            
+            async let tokenDetails = getLinklyAuthToken(withSecret: authSecretDetails.terminalSecret,
+                                                        forPOS: posName,
+                                                        andPOSVersion: posVersion,
+                                                        andPOSID: posID,
+                                                        andPOSVendorID: vendorID
             )
+            
+            return try await tokenDetails
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch APIError.unknown {
+            throw APIError.unknown
         }
-        
-        async let tokenDetails = getLinklyAuthToken(withSecret: authSecretDetails.terminalSecret,
-                                                    forPOS: posName,
-                                                    andPOSVersion: posVersion,
-                                                    andPOSID: posID,
-                                                    andPOSVendorID: vendorID
-        )
-        
-        return await tokenDetails
     }
     
     public func getLinklyAuthToken(withSecret secret: String,
@@ -107,31 +114,37 @@ final public class Pairing: ObservableObject {
                                    andPOSVersion posVersion: String,
                                    andPOSID posID: String,
                                    andPOSVendorID vendorID: String
-    ) async -> TokenDetails {
-        async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
-                                                              forPOS: posName,
-                                                              andPOSVersion: posVersion,
-                                                              andPOSID: posID,
-                                                              andPOSVendorID: vendorID
-        )
-            
-        guard let authTokenDetails = try? await getAuthToken else {
-            print("Unable to get auth token details... Hence, I am returning back.")
-            return TokenDetails(authSecret: "",
-                                authToken: "",
-                                tokenExpiryTime: 0
+    ) async throws -> TokenDetails {
+        do {
+            async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
+                                                                  forPOS: posName,
+                                                                  andPOSVersion: posVersion,
+                                                                  andPOSID: posID,
+                                                                  andPOSVendorID: vendorID
             )
-        }
             
-        print(authTokenDetails)
-        authSecret = secret
-        authToken = authTokenDetails.token
-        tokenExpiryTime = authTokenDetails.expirySeconds
-        
-        return TokenDetails(authSecret: authSecret,
-                            authToken: authToken,
-                            tokenExpiryTime: tokenExpiryTime
-        )
+            let authTokenDetails = try await getAuthToken
+            
+            print(authTokenDetails)
+            authSecret = secret
+            authToken = authTokenDetails.token
+            tokenExpiryTime = authTokenDetails.expirySeconds
+            
+            return TokenDetails(authSecret: authSecret,
+                                authToken: authToken,
+                                tokenExpiryTime: tokenExpiryTime
+            )
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch APIError.unknown {
+            throw APIError.unknown
+        }
     }
 }
 
@@ -203,78 +216,60 @@ final public class TransactionInteraction: ObservableObject {
 }
 
 extension TransactionInteraction {
-    
-    public func checkPinpadStatus(withSessionId sessionId: String) async -> TerminalStatus {
-        async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
-            
-        guard let pinpadStatus = try? await checkPinpadStatus else {
-            print("Unable to check connection between Pinpad and POS. Hence, I am returning back.")
-            return TerminalStatus(sessionID: sessionId,
-                                  responseType: "",
-                                  response: TerminalStatusDetails.init(merchant: "",
-                                                                       nii: 0,
-                                                                       catid: "",
-                                                                       caid: "",
-                                                                       timeout: 0,
-                                                                       loggedOn: false,
-                                                                       pinPadSerialNumber: "",
-                                                                       pinPadVersion: "",
-                                                                       bankCode: "",
-                                                                       bankDescription: "",
-                                                                       kvc: "",
-                                                                       safCount: 0,
-                                                                       networkType: "",
-                                                                       hardwareSerial: "",
-                                                                       retailerName: "",
-                                                                       optionsFlags: ["optionsFlags": false],
-                                                                       safCreditLimit: 0,
-                                                                       safDebitLimit: 0,
-                                                                       maxSAF: 0,
-                                                                       keyHandlingScheme: "",
-                                                                       cashoutLimit: 0,
-                                                                       refundLimit: 0,
-                                                                       cpatVersion: "",
-                                                                       nameTableVersion: "",
-                                                                       terminalCommsType: "",
-                                                                       cardMisreadCount: 0,
-                                                                       totalMemoryInTerminal: 0,
-                                                                       freeMemoryInTerminal: 0,
-                                                                       eftTerminalType: "",
-                                                                       numAppsInTerminal: 0,
-                                                                       numLinesOnDisplay: 0,
-                                                                       hardwareInceptionDate: "",
-                                                                       success: false,
-                                                                       responseCode: "",
-                                                                       responseText: "Failed"
-                                                                      )
-            )
+    public func checkPinpadStatus(withSessionId sessionId: String) async throws -> TerminalStatus {
+        do {
+            async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
+            let pinpadStatus = try await checkPinpadStatus
+            return pinpadStatus
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch {
+            throw APIError.unknown
         }
-        print(pinpadStatus)
-
-        return pinpadStatus
     }
 
     public func initiatePaymentWithLinkly(withSessionId sessionId: String,
                                           forPurchaseAmount amount: String,
                                           andTxnRefNumber txnRefNumber: String
-    ) async -> TransactionModel {
-        async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: sessionId,
-                                                                                  andMerchant: "00",
-                                                                                  withTxnType: "P",
-                                                                                  forPurchaseAmount: amount,
-                                                                                  withTxnRefNumber: txnRefNumber,
-                                                                                  andCurrencyCode: "AUD",
-                                                                                  withCutReceiptOption: "0",
-                                                                                  onApplication: "00",
-                                                                                  withTipEnabled: 1,
-                                                                                  andShouldAutoPrintReceipt: "7",
-                                                                                  andPurchaseAnalysisData: ["AMT": amount,
-                                                                                                            "PCM": "0000"] as [String: Any]
-        )
-        
-        guard var transactionResponseDetails = try? await getTransactionResponse else {
-            print("Transaction declined...")
-            return demoTransactionModel
+    ) async throws -> TransactionModel {
+        do {
+            async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: sessionId,
+                                                                                      andMerchant: "00",
+                                                                                      withTxnType: "P",
+                                                                                      forPurchaseAmount: amount,
+                                                                                      withTxnRefNumber: txnRefNumber,
+                                                                                      andCurrencyCode: "AUD",
+                                                                                      withCutReceiptOption: "0",
+                                                                                      onApplication: "00",
+                                                                                      withTipEnabled: 1,
+                                                                                      andShouldAutoPrintReceipt: "7",
+                                                                                      andPurchaseAnalysisData: ["AMT": amount,
+                                                                                                                "PCM": "0000"] as [String: Any]
+            )
+            
+            var transactionResponseDetails = try await getTransactionResponse
+            print(transactionResponseDetails)
+            
+            async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+            transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
+            
+            return transactionResponseDetails
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch {
+            throw APIError.unknown
         }
         
         print(transactionResponseDetails)
@@ -289,24 +284,40 @@ extension TransactionInteraction {
     public func refundPaymentWithLinkly(withSessionId sessionId: String,
                                         forRefundAmount amount: String,
                                         andTxnRefNumber txnRefNumber: String
-    ) async -> Refund {
-        async let getRefundResponse = transactionControl.refundTransaction(withSessionID: sessionId,
-                                                                           andMerchant: "00",
-                                                                           withTxnType: "R",
-                                                                           forRefundAmount: amount,
-                                                                           withTxnRefNumber: txnRefNumber,
-                                                                           andCurrencyCode: "AUD",
-                                                                           withCutReceiptOption: "0",
-                                                                           onApplication: "00",
-                                                                           withTipEnabled: 1,
-                                                                           andShouldAutoPrintReceipt: "7",
-                                                                           andPurchaseAnalysisData: ["AMT": amount,
-                                                                                                     "PCM": "0000"] as [String: Any]
-        )
-        
-        guard var refundResponseDetails = try? await getRefundResponse else {
-            print("Refund declined...")
-            return demoRefundModel
+    ) async throws -> Refund {
+        do {
+            async let getRefundResponse = transactionControl.refundTransaction(withSessionID: sessionId,
+                                                                               andMerchant: "00",
+                                                                               withTxnType: "R",
+                                                                               forRefundAmount: amount,
+                                                                               withTxnRefNumber: txnRefNumber,
+                                                                               andCurrencyCode: "AUD",
+                                                                               withCutReceiptOption: "0",
+                                                                               onApplication: "00",
+                                                                               withTipEnabled: 1,
+                                                                               andShouldAutoPrintReceipt: "7",
+                                                                               andPurchaseAnalysisData: ["AMT": amount,
+                                                                                                         "PCM": "0000"] as [String: Any]
+            )
+            
+            var refundResponseDetails = try await getRefundResponse
+            
+            print(refundResponseDetails)
+            
+            async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+            refundResponseDetails.linklyRefund.receipts = try await getRefundReceipt
+            
+            return refundResponseDetails
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch {
+            throw APIError.unknown
         }
         
         print(refundResponseDetails)
@@ -321,56 +332,74 @@ extension TransactionInteraction {
     
     public func cancelPaymentWithLinkly(withSessionId sessionId: String,
                                         andTxnRefNumber txnRefNumber: String
-    ) async -> String {
-        async let getTransactionResponse = transactionControl.cancelTransaction(forSessionID: sessionId)
-        
-        guard let transactionResponseDetails = try? await getTransactionResponse else {
-            print("Transaction cancellation request got failed...")
-            return "Failed"
+    ) async throws -> String {
+        do {
+            async let getTransactionResponse = transactionControl.cancelTransaction(forSessionID: sessionId)
+            
+            let transactionResponseDetails = try await getTransactionResponse
+            
+            print(transactionResponseDetails)
+            guard transactionResponseDetails.response != "" else {
+                return "Ok"
+            }
+            
+            return transactionResponseDetails.response!
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch {
+            throw APIError.unknown
         }
-        
-        print(transactionResponseDetails)
-        guard transactionResponseDetails.response != "" else {
-            return "Ok"
-        }
-        
-        return transactionResponseDetails.response!
     }
     
-    public func getTransactionReceipt(forTxnRefNumber txnRefNumber: String) async -> [LinklyTransactionReceipts] {
+    public func getTransactionReceipt(forTxnRefNumber txnRefNumber: String) async throws -> [LinklyTransactionReceipts] {
         var linklyReceipts = [LinklyTransactionReceipts]()
-        async let getTransctionReceiptResponse = transactionControl.getTransactionReceipts(withSessionID: generateSessionID(),
-                                                                                           andMerchant: "00",
-                                                                                           withTxnRefNumber: txnRefNumber,
-                                                                                           onApplication: "00",
-                                                                                           andShouldAutoPrintReceipt: "7",
-                                                                                           andReceiptReprintType: "1"
-        )
-        
-        guard let transactionReceiptResponseDetails  = try? await getTransctionReceiptResponse else {
-            print("Unable to get transaction receipts...")
+        do {
+            async let getTransctionReceiptResponse = try transactionControl.getTransactionReceipts(withSessionID: generateSessionID(),
+                                                                                                   andMerchant: "00",
+                                                                                                   withTxnRefNumber: txnRefNumber,
+                                                                                                   onApplication: "00",
+                                                                                                   andShouldAutoPrintReceipt: "7",
+                                                                                                   andReceiptReprintType: "1"
+            )
+            
+            let transactionReceiptResponseDetails = try await getTransctionReceiptResponse
+            
+            //Get receipt for transaction. Only merchant receipt will be received in response
+            //If response fails, then return the transaction model response without receipt(s)
+            let receiptText = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
+                                                        receiptText: transactionReceiptResponseDetails.response.receiptText
+            )
+            linklyReceipts.append(receiptText)
+            
+            //Get the receipt updated for merchant
+            var receiptTextToUpdate = receiptText.receiptText.joined(separator: ",")
+            receiptTextToUpdate = receiptTextToUpdate.replacingOccurrences(of: "MERCHANT",
+                                                                           with: "CUSTOMER"
+            )
+            
+            let updatedReceipt = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
+                                                           receiptText: receiptTextToUpdate.components(separatedBy: ",")
+            )
+            linklyReceipts.append(updatedReceipt)
+            
             return linklyReceipts
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch {
+            throw APIError.unknown
         }
-        
-        //Get receipt for transaction. Only merchant receipt will be received in response
-        //If response fails, then return the transaction model response without receipt(s)
-        let receiptText = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
-                                                    receiptText: transactionReceiptResponseDetails.response.receiptText
-        )
-        linklyReceipts.append(receiptText)
-        
-        //Get the receipt updated for merchant
-        var receiptTextToUpdate = receiptText.receiptText.joined(separator: ",")
-        receiptTextToUpdate = receiptTextToUpdate.replacingOccurrences(of: "MERCHANT",
-                                                                       with: "CUSTOMER"
-        )
-        
-        let updatedReceipt = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
-                                                       receiptText: receiptTextToUpdate.components(separatedBy: ",")
-        )
-        linklyReceipts.append(updatedReceipt)
-        
-        return linklyReceipts
     }
     
     public func startTransactionProgressTimer(forSessionID sessionID: String) {
