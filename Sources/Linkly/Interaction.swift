@@ -203,6 +203,7 @@ final public class TransactionInteraction: ObservableObject {
 }
 
 extension TransactionInteraction {
+    
     public func checkPinpadStatus(withSessionId sessionId: String) async -> TerminalStatus {
         async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
             
@@ -277,6 +278,7 @@ extension TransactionInteraction {
         }
         
         print(transactionResponseDetails)
+        transactionResponseDetails.linklyTransaction.sessionId = sessionId
         
         async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
         transactionResponseDetails.linklyTransaction.receipts = await getTransactionReceipt
@@ -309,6 +311,7 @@ extension TransactionInteraction {
         
         print(refundResponseDetails)
         
+        refundResponseDetails.linklyRefund.sessionId = sessionId
         async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
         refundResponseDetails.linklyRefund.receipts = await getRefundReceipt
         

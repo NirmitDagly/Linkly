@@ -31,6 +31,7 @@ struct TransactionModelResponseMapper: Mappable {
 }
 
 public struct LinklyTransactionResponse: Codable {
+    var sessionId: String
     var txnType: String
     var merchant: String
     var cardType: String
@@ -61,6 +62,7 @@ public struct LinklyTransactionResponse: Codable {
     var receipts: [LinklyTransactionReceiptsResponse]?
     
     enum CodingKeys: String, CodingKey {
+        case sessionId
         case txnType
         case merchant
         case cardType
@@ -94,7 +96,8 @@ public struct LinklyTransactionResponse: Codable {
 
 struct LinklyTransactionResponseMapper: Mappable {
     func map(_ input: LinklyTransactionResponse) throws -> LinklyTransaction {
-        return .init(txnType: input.txnType,
+        return .init(sessionId: input.sessionId,
+                     txnType: input.txnType,
                      merchant: input.merchant,
                      cardType: input.cardType,
                      cardName: input.cardName,
