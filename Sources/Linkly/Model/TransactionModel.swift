@@ -16,7 +16,7 @@ public struct TransactionModel: Codable {
 }
 
 public struct LinklyTransaction: Codable {
-    public var sessionId: String
+    public var sessionId: String?
     public var txnType: String
     public var merchant: String
     public var cardType: String

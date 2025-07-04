@@ -31,7 +31,7 @@ struct TransactionModelResponseMapper: Mappable {
 }
 
 public struct LinklyTransactionResponse: Codable {
-    var sessionId: String
+    var sessionId: String?
     var txnType: String
     var merchant: String
     var cardType: String
