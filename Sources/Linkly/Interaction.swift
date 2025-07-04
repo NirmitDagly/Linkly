@@ -254,11 +254,14 @@ extension TransactionInteraction {
                                                                                                                 "PCM": "0000"] as [String: Any]
             )
             
-            var transactionResponseDetails = try await getTransactionResponse
+            transactionResponseDetails = try await getTransactionResponse
             print(transactionResponseDetails)
             
             async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
             transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
+
+            transactionResponseDetails.linklyTransaction.sessionId = sessionId
+            return transactionResponseDetails
         } catch APIError.invalidEndpoint {
             throw APIError.invalidEndpoint
         } catch APIError.badServerResponse {
@@ -270,11 +273,6 @@ extension TransactionInteraction {
         } catch {
             throw APIError.unknown
         }
-        
-        print(transactionResponseDetails)
-        transactionResponseDetails.linklyTransaction.sessionId = sessionId
-        
-        return transactionResponseDetails
     }
     
     public func refundPaymentWithLinkly(withSessionId sessionId: String,
@@ -298,11 +296,13 @@ extension TransactionInteraction {
             )
             
             refundResponseDetails = try await getRefundResponse
-            
             print(refundResponseDetails)
             
             async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
             refundResponseDetails.linklyRefund.receipts = try await getRefundReceipt
+            
+            refundResponseDetails.linklyRefund.sessionId = sessionId
+            return refundResponseDetails
         } catch APIError.invalidEndpoint {
             throw APIError.invalidEndpoint
         } catch APIError.badServerResponse {
@@ -314,14 +314,6 @@ extension TransactionInteraction {
         } catch {
             throw APIError.unknown
         }
-        
-        print(refundResponseDetails)
-        
-        refundResponseDetails.linklyRefund.sessionId = sessionId
-        async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
-        refundResponseDetails.linklyRefund.receipts = try await getRefundReceipt
-        
-        return refundResponseDetails
     }
     
     public func cancelPaymentWithLinkly(withSessionId sessionId: String,
@@ -403,11 +395,14 @@ extension TransactionInteraction {
         do {
             async let getTransactionResponse = transactionControl.getTransactionProgress(forSessionID: sessionID)
             
-            var transactionResponseDetails = try await getTransactionResponse
+            transactionResponseDetails = try await getTransactionResponse
             print(transactionResponseDetails)
             
             async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
             transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
+                
+            transactionResponseDetails.linklyTransaction.sessionId = sessionID
+            return transactionResponseDetails
         } catch APIError.invalidEndpoint {
             throw APIError.invalidEndpoint
         } catch APIError.badServerResponse {
@@ -419,13 +414,5 @@ extension TransactionInteraction {
         } catch {
             throw APIError.unknown
         }
-        
-        print(transactionResponseDetails)
-        transactionResponseDetails.linklyTransaction.sessionId = sessionID
-        
-        async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
-        transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
-        
-        return transactionResponseDetails
     }
 }
