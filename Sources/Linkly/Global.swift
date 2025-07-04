@@ -153,5 +153,3 @@ var demoTerminalStatus = TerminalStatus(sessionID: "",
                                                                              responseText: "Failed"
                                                                             )
 )
-
-var transactionProgressTimer: Timer?

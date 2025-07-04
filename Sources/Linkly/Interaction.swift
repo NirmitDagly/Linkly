@@ -238,6 +238,7 @@ extension TransactionInteraction {
                                           forPurchaseAmount amount: String,
                                           andTxnRefNumber txnRefNumber: String
     ) async throws -> TransactionModel {
+        var transactionResponseDetails = demoTransactionModel
         do {
             async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: sessionId,
                                                                                       andMerchant: "00",
@@ -258,8 +259,6 @@ extension TransactionInteraction {
             
             async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
             transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
-            
-            return transactionResponseDetails
         } catch APIError.invalidEndpoint {
             throw APIError.invalidEndpoint
         } catch APIError.badServerResponse {
@@ -275,9 +274,6 @@ extension TransactionInteraction {
         print(transactionResponseDetails)
         transactionResponseDetails.linklyTransaction.sessionId = sessionId
         
-        async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
-        transactionResponseDetails.linklyTransaction.receipts = await getTransactionReceipt
-        
         return transactionResponseDetails
     }
     
@@ -285,6 +281,7 @@ extension TransactionInteraction {
                                         forRefundAmount amount: String,
                                         andTxnRefNumber txnRefNumber: String
     ) async throws -> Refund {
+        var refundResponseDetails = demoRefundModel
         do {
             async let getRefundResponse = transactionControl.refundTransaction(withSessionID: sessionId,
                                                                                andMerchant: "00",
@@ -300,14 +297,12 @@ extension TransactionInteraction {
                                                                                                          "PCM": "0000"] as [String: Any]
             )
             
-            var refundResponseDetails = try await getRefundResponse
+            refundResponseDetails = try await getRefundResponse
             
             print(refundResponseDetails)
             
             async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
             refundResponseDetails.linklyRefund.receipts = try await getRefundReceipt
-            
-            return refundResponseDetails
         } catch APIError.invalidEndpoint {
             throw APIError.invalidEndpoint
         } catch APIError.badServerResponse {
@@ -324,10 +319,9 @@ extension TransactionInteraction {
         
         refundResponseDetails.linklyRefund.sessionId = sessionId
         async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
-        refundResponseDetails.linklyRefund.receipts = await getRefundReceipt
+        refundResponseDetails.linklyRefund.receipts = try await getRefundReceipt
         
         return refundResponseDetails
-        
     }
     
     public func cancelPaymentWithLinkly(withSessionId sessionId: String,
@@ -401,25 +395,37 @@ extension TransactionInteraction {
             throw APIError.unknown
         }
     }
-    
-    public func startTransactionProgressTimer(forSessionID sessionID: String) {
-        if transactionProgressTimer == nil {
-            transactionProgressTimer = Timer.scheduledTimer(withTimeInterval: 90,
-                                                            repeats: true
-            ) { [weak self] _ in
-                //Stop observing the current request.
-                //Invalidate the current transaction progress timer.
-                //Initiate a new request.
-                Task { 
-                    await self?.getTransactionProgressStatus(forSessionID: sessionID)
-                }
-            }
+     
+    public func getTransactionProgressStatus(forSessionID sessionID: String,
+                                             andTxnRefNumber txnRefNumber: String
+    ) async throws -> TransactionModel {
+        var transactionResponseDetails = demoTransactionModel
+        do {
+            async let getTransactionResponse = transactionControl.getTransactionProgress(forSessionID: sessionID)
+            
+            var transactionResponseDetails = try await getTransactionResponse
+            print(transactionResponseDetails)
+            
+            async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+            transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch {
+            throw APIError.unknown
         }
-    }
-    
-    public func getTransactionProgressStatus(forSessionID sessionID: String) async -> TransactionModel {
-        async let getTransactionResponse = transactionControl.getTransactionProgress(forSessionID: sessionID)
         
-        return demoTransactionModel
+        print(transactionResponseDetails)
+        transactionResponseDetails.linklyTransaction.sessionId = sessionID
+        
+        async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+        transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
+        
+        return transactionResponseDetails
     }
 }
