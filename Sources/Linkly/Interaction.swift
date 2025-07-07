@@ -415,4 +415,28 @@ extension TransactionInteraction {
             throw APIError.unknown
         }
     }
+    
+    public func checkTransactionStatus(forSessionID sessionID: String,
+                                       andTxnRefNumber txnRefNumber: String
+    ) async throws -> LinklyTransaction {
+        var transactionResponseDetails = demoTransactionModel
+        do {
+            async let getTransactionResponse = transactionControl.getTransactionStatus(forSessionID: sessionID)
+            
+            transactionResponseDetails = try await getTransactionResponse
+            print(transactionResponseDetails)
+
+            return transactionResponseDetails.linklyTransaction
+        } catch APIError.invalidEndpoint {
+            throw APIError.invalidEndpoint
+        } catch APIError.badServerResponse {
+            throw APIError.badServerResponse
+        } catch APIError.networkError {
+            throw APIError.networkError
+        } catch APIError.parsing {
+            throw APIError.parsing
+        } catch {
+            throw APIError.unknown
+        }
+    }
 }
