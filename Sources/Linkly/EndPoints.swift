@@ -200,10 +200,7 @@ class APIEndPoints {
             urlQueries: ["async": "false"],
             headers: [
                 "Authorization": "Bearer \(authToken)"
-            ],
-            bodyParameter: .dictionary([:],
-                                       options: .prettyPrinted
-                                      )
+            ]
         )
     }
     
