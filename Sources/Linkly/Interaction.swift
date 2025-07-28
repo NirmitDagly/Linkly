@@ -12,13 +12,9 @@ import SwiftUI
 import DesignSystem
 
 class LinklyConfiguration: ObservableObject {
-    let logger: Logger
     let apiClientService: APIClientService
     
-    init(logger: Logger,
-         apiClientService: APIClientService
-    ) {
-        self.logger = logger
+    init(apiClientService: APIClientService) {
         self.apiClientService = apiClientService
     }
 }
@@ -27,11 +23,7 @@ class AuthConfiguration: ObservableObject {
     let configuration: LinklyConfiguration
     
     init(isProductionMode prodMode: Bool) {
-        let logger = Logger(label: "Qiki POS")
-        print(logger)
-
-        var apiClientService = APIClientService(logger: logger,
-                                                configuration: .init(baseURL: URL(string: "https://auth.sandbox.cloud.pceftpos.com"),
+        var apiClientService = APIClientService(configuration: .init(baseURL: URL(string: "https://auth.sandbox.cloud.pceftpos.com"),
                                                                      baseHeaders: ["Accept": "application/json",
                                                                                    "content-type": "application/json"
                                                                                   ]
@@ -39,8 +31,7 @@ class AuthConfiguration: ObservableObject {
         )
 
         if prodMode == true {
-            apiClientService = APIClientService(logger: logger,
-                                                    configuration: .init(baseURL: URL(string: "https://auth.cloud.pceftpos.com"),
+            apiClientService = APIClientService(configuration: .init(baseURL: URL(string: "https://auth.cloud.pceftpos.com"),
                                                                          baseHeaders: ["Accept": "application/json",
                                                                                        "content-type": "application/json"
                                                                                       ]
@@ -48,9 +39,7 @@ class AuthConfiguration: ObservableObject {
             )
         }
         
-        configuration = .init(logger: logger,
-                              apiClientService: apiClientService
-        )
+        configuration = .init(apiClientService: apiClientService)
     }
 }
 
@@ -149,13 +138,10 @@ final public class Pairing: ObservableObject {
 }
 
 class LinklyTransactionConfiguration: ObservableObject {
-    let logger: Logger
+
     let apiClientService: APIClientService
     
-    init(logger: Logger,
-         apiClientService: APIClientService
-    ) {
-        self.logger = logger
+    init(apiClientService: APIClientService) {
         self.apiClientService = apiClientService
     }
 }
@@ -164,11 +150,7 @@ class TransactionConfiguration: ObservableObject {
     let configuration: LinklyTransactionConfiguration
     
     init(isProductionMode prodMode: Bool) {
-        let logger = Logger(label: "Qiki POS")
-        print(logger)
-
-        var apiClientService = APIClientService(logger: logger,
-                                                configuration: .init(baseURL: URL(string: "https://rest.pos.sandbox.cloud.pceftpos.com"),
+        var apiClientService = APIClientService(configuration: .init(baseURL: URL(string: "https://rest.pos.sandbox.cloud.pceftpos.com"),
                                                                      baseHeaders: ["Accept": "application/json",
                                                                                    "content-type": "application/json"
                                                                                   ]
@@ -176,8 +158,7 @@ class TransactionConfiguration: ObservableObject {
         )
 
         if prodMode == true {
-            apiClientService = APIClientService(logger: logger,
-                                                    configuration: .init(baseURL: URL(string: "https://rest.pos.cloud.pceftpos.com"),
+            apiClientService = APIClientService(configuration: .init(baseURL: URL(string: "https://rest.pos.cloud.pceftpos.com"),
                                                                          baseHeaders: ["Accept": "application/json",
                                                                                        "content-type": "application/json"
                                                                                       ]
@@ -185,9 +166,7 @@ class TransactionConfiguration: ObservableObject {
             )
         }
         
-        configuration = .init(logger: logger,
-                              apiClientService: apiClientService
-        )
+        configuration = .init(apiClientService: apiClientService)
     }
 }
 
