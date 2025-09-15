@@ -46,6 +46,7 @@ public class TerminalPairing: TerminalOperationRepository {
                                          andPassword: password,
                                          andPairingCode: pairCode
                                         ),
+            andIsUploadingFile: false,
             mapper: PairingResponseMapper()
         )
     }
@@ -63,6 +64,7 @@ public class TerminalPairing: TerminalOperationRepository {
                                       andPOSID: posID,
                                       andPOSVendorID: vendorID
                                      ),
+            andIsUploadingFile: false,
             mapper: AuthTokenResponseMapper()
         )
     }
@@ -125,6 +127,7 @@ public class TransactionControl: TransactionRepository {
     public func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus {
         try await apiClientService.request(
             APIEndPoints.checkTerminalStatus(withSessionID: sessionID),
+            andIsUploadingFile: false,
             mapper: TerminalStatusResponseMapper()
         )
     }
@@ -132,6 +135,7 @@ public class TransactionControl: TransactionRepository {
     public func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon {
         try await apiClientService.request(
             APIEndPoints.logonToPinpad(withSessionID: sessionID),
+            andIsUploadingFile: false,
             mapper: LogonResponseMapper()
         )
     }
@@ -161,6 +165,7 @@ public class TransactionControl: TransactionRepository {
                                              andShouldAutoPrintReceipt: autoPrintReceipt,
                                              andPurchaseAnalysisData: purchaseAnalysisData
                                             ),
+            andIsUploadingFile: false,
             mapper: TransactionModelResponseMapper()
         )
     }
@@ -190,6 +195,7 @@ public class TransactionControl: TransactionRepository {
                                         andShouldAutoPrintReceipt: autoPrintReceipt,
                                         andPurchaseAnalysisData: purchaseAnalysisData
                                        ),
+            andIsUploadingFile: false,
             mapper: RefundResponseMapper()
         )
     }
@@ -197,6 +203,7 @@ public class TransactionControl: TransactionRepository {
     public func cancelTransaction(forSessionID sessionID: String) async throws -> SendKey {
         try await apiClientService.request(
             APIEndPoints.cancelTransaction(forSessionID: sessionID),
+            andIsUploadingFile: false,
             mapper: SendKeyResponseResponseMapper()
         )
     }
@@ -205,6 +212,7 @@ public class TransactionControl: TransactionRepository {
         
         try await apiClientService.request(
             APIEndPoints.getTransactionStatus(forSessionID: sessionID),
+            andIsUploadingFile: false,
             mapper: TransactionModelResponseMapper()
         )
     }
@@ -224,6 +232,7 @@ public class TransactionControl: TransactionRepository {
                                                andShouldAutoPrintReceipt: autoPrintReceipt,
                                                andReceiptReprintType: reprintType
                                               ),
+            andIsUploadingFile: false,
             mapper: TransactionReceiptResponseMapper()
         )
     }
@@ -231,6 +240,7 @@ public class TransactionControl: TransactionRepository {
     public func getTransactionProgress(forSessionID sessionID: String) async throws -> TransactionModel {
         try await apiClientService.request(
             APIEndPoints.getTransactionProgressStatus(forSessionID: sessionID),
+            andIsUploadingFile: false,
             mapper: TransactionModelResponseMapper()
         )
     }
