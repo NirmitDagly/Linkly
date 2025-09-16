@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/Network",
       "state" : {
-        "revision" : "3159c02c874b23c405a1ccb3f737eec87f369488",
-        "version" : "1.0.37"
+        "revision" : "d79f39e6b3bc548a3c5169446285916befebe577",
+        "version" : "1.0.38"
       }
     },
     {
