@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/Logger",
       "state" : {
-        "revision" : "ac2df6fc7605b5d6c2302d91a03a39371c8af8ee",
-        "version" : "1.0.3"
+        "revision" : "970d867961c932ab4f6ea901144e975292418d57",
+        "version" : "1.0.4"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/Network",
       "state" : {
-        "revision" : "add89c139e2d0af58752b574433b0d7b0793086e",
-        "version" : "1.0.39"
+        "revision" : "6e11d53eb561fa71b0cb5e6a3a552be0d40cea80",
+        "version" : "1.0.40"
       }
     },
     {
