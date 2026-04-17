@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Network
+import HTTPNetwork
 
 public struct PairingResponse: Codable {
     public let terminalSecret: String

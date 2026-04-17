@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Network
+import HTTPNetwork
 
 public struct RefundResponse: Codable {
     public var linklyRefundSessionID: String?

@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Network
+import HTTPNetwork
 
 public struct TransactionModel: Codable {
     public var linklyTransactionSessionID: String?

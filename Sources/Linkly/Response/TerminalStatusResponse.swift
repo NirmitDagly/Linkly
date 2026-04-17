@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Network
+import HTTPNetwork
 
 public struct TerminalStatusResponse: Codable {
     public var sessionID: String?

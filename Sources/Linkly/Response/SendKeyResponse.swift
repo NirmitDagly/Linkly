@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Network
+import HTTPNetwork
 
 public struct SendKeyResponse: Codable {
     public var sessionId: String?

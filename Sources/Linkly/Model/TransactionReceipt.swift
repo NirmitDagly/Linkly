@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Network
+import HTTPNetwork
 
 public struct TransactionReceipt: Codable {
     public var responseType: String

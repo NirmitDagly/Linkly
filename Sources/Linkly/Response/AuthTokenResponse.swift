@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Network
+import HTTPNetwork
 
 public struct AuthTokenResponse: Codable {
     public var token: String

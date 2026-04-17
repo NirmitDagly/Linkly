@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Network
+import HTTPNetwork
 import Logger
 
 public protocol TerminalOperationRepository {

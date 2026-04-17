@@ -7,7 +7,7 @@
 
 import Foundation
 import Logger
-import Network
+import HTTPNetwork
 import SwiftUI
 import DesignSystem
 
