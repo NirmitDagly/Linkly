@@ -85,16 +85,8 @@ final public class Pairing: ObservableObject {
             )
             
             return try await tokenDetails
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
-        } catch APIError.unknown {
-            throw APIError.unknown
+        } catch {
+            throw error
         }
     }
     
@@ -123,16 +115,8 @@ final public class Pairing: ObservableObject {
                                 authToken: authToken,
                                 tokenExpiryTime: tokenExpiryTime
             )
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
-        } catch APIError.unknown {
-            throw APIError.unknown
+        } catch {
+            throw error
         }
     }
 }
@@ -195,21 +179,14 @@ final public class TransactionInteraction: ObservableObject {
 }
 
 extension TransactionInteraction {
+    
     public func checkPinpadStatus(withSessionId sessionId: String) async throws -> TerminalStatus {
         do {
             async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
             let pinpadStatus = try await checkPinpadStatus
             return pinpadStatus
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
         } catch {
-            throw APIError.unknown
+            throw error
         }
     }
 
@@ -241,16 +218,8 @@ extension TransactionInteraction {
 
             transactionResponseDetails.linklyTransaction.sessionId = sessionId
             return transactionResponseDetails
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
         } catch {
-            throw APIError.unknown
+            throw error
         }
     }
     
@@ -282,16 +251,8 @@ extension TransactionInteraction {
             
             refundResponseDetails.linklyRefund.sessionId = sessionId
             return refundResponseDetails
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
         } catch {
-            throw APIError.unknown
+            throw error
         }
     }
     
@@ -309,16 +270,8 @@ extension TransactionInteraction {
             }
             
             return transactionResponseDetails.response!
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
         } catch {
-            throw APIError.unknown
+            throw error
         }
     }
     
@@ -354,16 +307,8 @@ extension TransactionInteraction {
             linklyReceipts.append(updatedReceipt)
             
             return linklyReceipts
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
         } catch {
-            throw APIError.unknown
+            throw error
         }
     }
      
@@ -382,16 +327,8 @@ extension TransactionInteraction {
                 
             transactionResponseDetails.linklyTransaction.sessionId = sessionID
             return transactionResponseDetails
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
         } catch {
-            throw APIError.unknown
+            throw error
         }
     }
     
@@ -406,16 +343,8 @@ extension TransactionInteraction {
             print(transactionResponseDetails)
 
             return transactionResponseDetails.linklyTransaction
-        } catch APIError.invalidEndpoint {
-            throw APIError.invalidEndpoint
-        } catch APIError.badServerResponse {
-            throw APIError.badServerResponse
-        } catch APIError.networkError {
-            throw APIError.networkError
-        } catch APIError.parsing {
-            throw APIError.parsing
         } catch {
-            throw APIError.unknown
+            throw error
         }
     }
 }
