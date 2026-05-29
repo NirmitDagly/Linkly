@@ -192,7 +192,8 @@ extension TransactionInteraction {
 
     public func initiatePaymentWithLinkly(withSessionId sessionId: String,
                                           forPurchaseAmount amount: String,
-                                          andTxnRefNumber txnRefNumber: String
+                                          andTxnRefNumber txnRefNumber: String,
+                                          andTippingEnabled tippingEnabled: Bool
     ) async throws -> TransactionModel {
         var transactionResponseDetails = demoTransactionModel
         do {
@@ -204,7 +205,7 @@ extension TransactionInteraction {
                                                                                       andCurrencyCode: "AUD",
                                                                                       withCutReceiptOption: "0",
                                                                                       onApplication: "00",
-                                                                                      withTipEnabled: 1,
+                                                                                      withTipEnabled: tippingEnabled ? 1 : 0,
                                                                                       andShouldAutoPrintReceipt: "7",
                                                                                       andPurchaseAnalysisData: ["AMT": amount,
                                                                                                                 "PCM": "0000"] as [String: Any]
