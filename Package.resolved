@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/DesignSystem",
       "state" : {
-        "revision" : "32b934abb37d517c4c27bfeedcc2046b4fc821b7",
-        "version" : "1.0.22"
+        "revision" : "86b691fe0a0b878d178629326ca4bebb5be64d72",
+        "version" : "1.0.26"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/Network",
       "state" : {
-        "revision" : "c1d61dd6ed302cf9bc036156ce2306fdf5273400",
-        "version" : "1.0.48"
+        "revision" : "38b753dfb84fd7724a408b661c4830bb1fe6829c",
+        "version" : "1.0.53"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "2aed77ae5ec9a86d8fe42c12275e4c2653a286ee",
-        "version" : "1.13.1"
+        "revision" : "92448c359f00ebe36ae97d3bd9086f13c7692b5a",
+        "version" : "1.13.2"
       }
     }
   ],

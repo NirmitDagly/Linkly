@@ -1,5 +1,5 @@
 //
-//  Interaction.swift
+//  TransactionInteraction.swift
 //
 //
 //  Created by Miamedia Developer on 01/10/24.
@@ -10,116 +10,6 @@ import Logger
 import HTTPNetwork
 import SwiftUI
 import DesignSystem
-
-class LinklyConfiguration: ObservableObject {
-    let apiClientService: APIClientService
-    
-    init(apiClientService: APIClientService) {
-        self.apiClientService = apiClientService
-    }
-}
-
-class AuthConfiguration: ObservableObject {
-    let configuration: LinklyConfiguration
-    
-    init(isProductionMode prodMode: Bool) {
-        var apiClientService = APIClientService(configuration: .init(baseURL: URL(string: "https://auth.sandbox.cloud.pceftpos.com"),
-                                                                     baseHeaders: ["Accept": "application/json",
-                                                                                   "content-type": "application/json"
-                                                                                  ]
-                                                                    )
-        )
-
-        if prodMode == true {
-            apiClientService = APIClientService(configuration: .init(baseURL: URL(string: "https://auth.cloud.pceftpos.com"),
-                                                                         baseHeaders: ["Accept": "application/json",
-                                                                                       "content-type": "application/json"
-                                                                                      ]
-                                                                        )
-            )
-        }
-        
-        configuration = .init(apiClientService: apiClientService)
-    }
-}
-
-final public class Pairing: ObservableObject {
-    var terminalPairing: TerminalPairing
-    
-    public init(isProductionMode mode: Bool) {
-        self.terminalPairing = TerminalPairing.init(apiClientService: AuthConfiguration.init(isProductionMode: mode).configuration.apiClientService)
-    }
-    
-    public func initiatePairing(withTerminalNumber terminalNumber: String,
-                                   andUsername username: String,
-                                   andPassword password: String,
-                                   andPairingCode pairCode: String,
-                                   forPOS posName: String,
-                                   andPOSVersion posVersion: String,
-                                   andPOSID posID: String,
-                                   andPOSVendorID vendorID: String
-    ) async throws -> TokenDetails {
-        do {
-            async let getAuthSecret = terminalPairing.pairTerminal(withTerminalNumber: terminalNumber,
-                                                                   andUsername: username,
-                                                                   andPassword: password,
-                                                                   andPairingCode: pairCode
-            )
-            
-            let authSecretDetails = try await getAuthSecret
-            print(authSecretDetails)
-            
-            guard authSecretDetails.terminalSecret != "" else {
-                print("Unable to get auth secret details... Hence, I am returning back.")
-                return TokenDetails(authSecret: "",
-                                    authToken: "",
-                                    tokenExpiryTime: 0
-                )
-            }
-            
-            async let tokenDetails = getLinklyAuthToken(withSecret: authSecretDetails.terminalSecret,
-                                                        forPOS: posName,
-                                                        andPOSVersion: posVersion,
-                                                        andPOSID: posID,
-                                                        andPOSVendorID: vendorID
-            )
-            
-            return try await tokenDetails
-        } catch {
-            throw error
-        }
-    }
-    
-    public func getLinklyAuthToken(withSecret secret: String,
-                                   forPOS posName: String,
-                                   andPOSVersion posVersion: String,
-                                   andPOSID posID: String,
-                                   andPOSVendorID vendorID: String
-    ) async throws -> TokenDetails {
-        do {
-            async let getAuthToken = terminalPairing.getAuthToken(withSecret: secret,
-                                                                  forPOS: posName,
-                                                                  andPOSVersion: posVersion,
-                                                                  andPOSID: posID,
-                                                                  andPOSVendorID: vendorID
-            )
-            
-            let authTokenDetails = try await getAuthToken
-            
-            print(authTokenDetails)
-            authSecret = secret
-            authToken = authTokenDetails.token
-            tokenExpiryTime = authTokenDetails.expirySeconds
-            
-            return TokenDetails(authSecret: authSecret,
-                                authToken: authToken,
-                                tokenExpiryTime: tokenExpiryTime
-            )
-        } catch {
-            throw error
-        }
-    }
-}
 
 class LinklyTransactionConfiguration: ObservableObject {
 
@@ -184,7 +74,7 @@ extension TransactionInteraction {
         do {
             async let checkPinpadStatus = transactionControl.checkTerminalStatus(withSessionID: sessionId)
             let pinpadStatus = try await checkPinpadStatus
-            return pinpadStatus
+            return pinpadStatus.model!
         } catch {
             throw error
         }
@@ -195,7 +85,7 @@ extension TransactionInteraction {
                                           andTxnRefNumber txnRefNumber: String,
                                           andTippingEnabled tippingEnabled: Bool
     ) async throws -> TransactionModel {
-        var transactionResponseDetails = demoTransactionModel
+        var transactionModel = demoTransactionModel
         do {
             async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: sessionId,
                                                                                       andMerchant: "00",
@@ -210,15 +100,14 @@ extension TransactionInteraction {
                                                                                       andPurchaseAnalysisData: ["AMT": amount,
                                                                                                                 "PCM": "0000"] as [String: Any]
             )
-            
-            transactionResponseDetails = try await getTransactionResponse
-            print(transactionResponseDetails)
-            
-            async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
-            transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
-
-            transactionResponseDetails.linklyTransaction.sessionId = sessionId
-            return transactionResponseDetails
+            let transactionResponseDetails = try await getTransactionResponse
+            if (transactionResponseDetails.statusCode == 200 || transactionResponseDetails.statusCode == 201) && transactionResponseDetails.model != nil {
+                transactionModel = transactionResponseDetails.model!
+                async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+                transactionModel.linklyTransaction.receipts = try await getTransactionReceipt
+                transactionModel.linklyTransaction.sessionId = sessionId
+            }
+            return transactionModel
         } catch {
             throw error
         }
@@ -228,7 +117,7 @@ extension TransactionInteraction {
                                         forRefundAmount amount: String,
                                         andTxnRefNumber txnRefNumber: String
     ) async throws -> Refund {
-        var refundResponseDetails = demoRefundModel
+        var refundModel = demoRefundModel
         do {
             async let getRefundResponse = transactionControl.refundTransaction(withSessionID: sessionId,
                                                                                andMerchant: "00",
@@ -244,14 +133,15 @@ extension TransactionInteraction {
                                                                                                          "PCM": "0000"] as [String: Any]
             )
             
-            refundResponseDetails = try await getRefundResponse
-            print(refundResponseDetails)
-            
-            async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
-            refundResponseDetails.linklyRefund.receipts = try await getRefundReceipt
-            
-            refundResponseDetails.linklyRefund.sessionId = sessionId
-            return refundResponseDetails
+            let refundResponseDetails = try await getRefundResponse
+            if (refundResponseDetails.statusCode == 200 || refundResponseDetails.statusCode == 201) && refundResponseDetails.model != nil {
+                print(refundResponseDetails)
+                refundModel = refundResponseDetails.model!
+                async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+                refundModel.linklyRefund.receipts = try await getRefundReceipt
+                refundModel.linklyRefund.sessionId = sessionId
+            }
+            return refundModel
         } catch {
             throw error
         }
@@ -262,15 +152,13 @@ extension TransactionInteraction {
     ) async throws -> String {
         do {
             async let getTransactionResponse = transactionControl.cancelTransaction(forSessionID: sessionId)
-            
             let transactionResponseDetails = try await getTransactionResponse
-            
             print(transactionResponseDetails)
-            guard transactionResponseDetails.response != "" else {
+            guard transactionResponseDetails.model != nil, transactionResponseDetails.model!.response != "" else {
                 return "Ok"
             }
             
-            return transactionResponseDetails.response!
+            return transactionResponseDetails.model!.response!
         } catch {
             throw error
         }
@@ -286,27 +174,30 @@ extension TransactionInteraction {
                                                                                                    andShouldAutoPrintReceipt: "7",
                                                                                                    andReceiptReprintType: "1"
             )
-            
             let transactionReceiptResponseDetails = try await getTransctionReceiptResponse
             
-            //Get receipt for transaction. Only merchant receipt will be received in response
-            //If response fails, then return the transaction model response without receipt(s)
-            let receiptText = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
-                                                        receiptText: transactionReceiptResponseDetails.response.receiptText
-            )
-            linklyReceipts.append(receiptText)
-            
-            //Get the receipt updated for merchant
-            var receiptTextToUpdate = receiptText.receiptText.joined(separator: ",")
-            receiptTextToUpdate = receiptTextToUpdate.replacingOccurrences(of: "MERCHANT",
-                                                                           with: "CUSTOMER"
-            )
-            
-            let updatedReceipt = LinklyTransactionReceipts(type: transactionReceiptResponseDetails.response.responseText,
-                                                           receiptText: receiptTextToUpdate.components(separatedBy: ",")
-            )
-            linklyReceipts.append(updatedReceipt)
-            
+            if (transactionReceiptResponseDetails.statusCode == 200 || transactionReceiptResponseDetails.statusCode == 201) && transactionReceiptResponseDetails.model != nil {
+                //Get receipt for transaction. Only merchant receipt will be received in response
+                //If response fails, then return the transaction model response without receipt(s)
+                let receiptText = LinklyTransactionReceipts(
+                    type: transactionReceiptResponseDetails.model!.response.responseText,
+                    receiptText: transactionReceiptResponseDetails.model!.response.receiptText
+                )
+                linklyReceipts.append(receiptText)
+                
+                //Get the receipt updated for merchant
+                var receiptTextToUpdate = receiptText.receiptText.joined(separator: ",")
+                receiptTextToUpdate = receiptTextToUpdate.replacingOccurrences(
+                    of: "MERCHANT",
+                    with: "CUSTOMER"
+                )
+                
+                let updatedReceipt = LinklyTransactionReceipts(
+                    type: transactionReceiptResponseDetails.model!.response.responseText,
+                    receiptText: receiptTextToUpdate.components(separatedBy: ",")
+                )
+                linklyReceipts.append(updatedReceipt)
+            }
             return linklyReceipts
         } catch {
             throw error
@@ -315,19 +206,20 @@ extension TransactionInteraction {
      
     public func getTransactionProgressStatus(forSessionID sessionID: String,
                                              andTxnRefNumber txnRefNumber: String
-    ) async throws -> TransactionModel {
-        var transactionResponseDetails = demoTransactionModel
+    ) async throws -> (Int, TransactionModel) {
+        var transactionModel = demoTransactionModel
         do {
             async let getTransactionResponse = transactionControl.getTransactionProgress(forSessionID: sessionID)
             
-            transactionResponseDetails = try await getTransactionResponse
-            print(transactionResponseDetails)
-            
-            async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
-            transactionResponseDetails.linklyTransaction.receipts = try await getTransactionReceipt
-                
-            transactionResponseDetails.linklyTransaction.sessionId = sessionID
-            return transactionResponseDetails
+            let transactionResponseDetails = try await getTransactionResponse
+            if (transactionResponseDetails.statusCode == 200 || transactionResponseDetails.statusCode == 201) && transactionResponseDetails.model != nil {
+                print(transactionResponseDetails)
+                transactionModel = transactionResponseDetails.model!
+                async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
+                transactionModel.linklyTransaction.receipts = try await getTransactionReceipt
+                transactionModel.linklyTransaction.sessionId = sessionID
+            }
+            return (transactionResponseDetails.statusCode, transactionModel)
         } catch {
             throw error
         }
@@ -335,17 +227,19 @@ extension TransactionInteraction {
     
     public func checkTransactionStatus(forSessionID sessionID: String,
                                        andTxnRefNumber txnRefNumber: String
-    ) async throws -> LinklyTransaction {
-        var transactionResponseDetails = demoTransactionModel
+    ) async throws -> (Int, LinklyTransaction) {
+        var transactionModel = demoTransactionModel
         do {
             async let getTransactionResponse = transactionControl.getTransactionStatus(forSessionID: sessionID)
-            
-            transactionResponseDetails = try await getTransactionResponse
-            print(transactionResponseDetails)
-
-            return transactionResponseDetails.linklyTransaction
+            let transactionResponseDetails = try await getTransactionResponse
+            if (transactionResponseDetails.statusCode == 200 || transactionResponseDetails.statusCode == 201) && transactionResponseDetails.model != nil {
+                print(transactionResponseDetails)
+                transactionModel = transactionResponseDetails.model!
+            }
+            return (transactionResponseDetails.statusCode, transactionModel.linklyTransaction)
         } catch {
             throw error
         }
     }
 }
+

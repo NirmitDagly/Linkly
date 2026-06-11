@@ -1,118 +1,14 @@
 //
-//  Repository.swift
+//  TransactionRepositoryImpl.swift
+//  Linkly
 //
-//
-//  Created by Miamedia Developer on 15/08/24.
+//  Created by Miamedia on 11/6/2026.
 //
 
 import Foundation
 import SwiftUI
 import HTTPNetwork
 import Logger
-
-public protocol TerminalOperationRepository {
-    
-    func pairTerminal(withTerminalNumber terminalNumber: String,
-                      andUsername username: String,
-                      andPassword password: String,
-                      andPairingCode pairCode: String
-    ) async throws -> PairingModel
-    
-    func getAuthToken(withSecret secret: String,
-                      forPOS posName: String,
-                      andPOSVersion posVersion: String,
-                      andPOSID posID: String,
-                      andPOSVendorID vendorID: String
-    ) async throws -> AuthTokenModel
-    
-}
-
-public class TerminalPairing: TerminalOperationRepository {
-
-    private let apiClientService: APIClientService
-
-    public init(apiClientService: APIClientService) {
-        self.apiClientService = apiClientService
-    }
-    
-    public func pairTerminal(withTerminalNumber terminalNumber: String,
-                             andUsername username: String,
-                             andPassword password: String,
-                             andPairingCode pairCode: String
-    ) async throws -> PairingModel {
-        try await apiClientService.request(
-            APIEndPoints.initiatePairing(withTerminalNumber: terminalNumber,
-                                         andUsername: username,
-                                         andPassword: password,
-                                         andPairingCode: pairCode
-                                        ),
-            mapper: PairingResponseMapper()
-        )
-    }
-    
-    public func getAuthToken(withSecret secret: String,
-                             forPOS posName: String,
-                             andPOSVersion posVersion: String,
-                             andPOSID posID: String,
-                             andPOSVendorID vendorID: String
-    ) async throws -> AuthTokenModel {
-        try await apiClientService.request(
-            APIEndPoints.getAuthToken(withSecret: secret,
-                                      forPOS: posName,
-                                      andPOSVersion: posVersion,
-                                      andPOSID: posID,
-                                      andPOSVendorID: vendorID
-                                     ),
-            mapper: AuthTokenResponseMapper()
-        )
-    }
-}
-
-
-protocol TransactionRepository {
-    func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus
-    
-    func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon
-
-    func initiateTransaction(withSessionID sessionID: String,
-                             andMerchant merchant: String,
-                             withTxnType txnType: String,
-                             forPurchaseAmount amount: String,
-                             withTxnRefNumber txnRefNumber: String,
-                             andCurrencyCode currencyCode: String,
-                             withCutReceiptOption cutReceipt: String,
-                             onApplication application: String,
-                             withTipEnabled enableTip: Int,
-                             andShouldAutoPrintReceipt autoPrintReceipt: String,
-                             andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
-    ) async throws -> TransactionModel
-    
-    func refundTransaction(withSessionID sessionID: String,
-                           andMerchant merchant: String,
-                           withTxnType txnType: String,
-                           forRefundAmount amount: String,
-                           withTxnRefNumber txnRefNumber: String,
-                           andCurrencyCode currencyCode: String,
-                           withCutReceiptOption cutReceipt: String,
-                           onApplication application: String,
-                           withTipEnabled enableTip: Int,
-                           andShouldAutoPrintReceipt autoPrintReceipt: String,
-                           andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
-    ) async throws -> Refund
-    
-    func cancelTransaction(forSessionID sessionID: String) async throws -> SendKey
-    
-    func getTransactionStatus(forSessionID sessionID: String) async throws -> TransactionModel
-    
-    func getTransactionReceipts(withSessionID sessionID: String,
-                                andMerchant merchant: String,
-                                withTxnRefNumber txnRefNumber: String,
-                                onApplication application: String,
-                                andShouldAutoPrintReceipt autoPrintReceipt: String,
-                                andReceiptReprintType reprintType: String
-    ) async throws -> TransactionReceipt
-    func getTransactionProgress(forSessionID sessionID: String) async throws -> TransactionModel
-}
 
 public class TransactionControl: TransactionRepository {
     
@@ -122,14 +18,14 @@ public class TransactionControl: TransactionRepository {
         self.apiClientService = apiClientService
     }
     
-    public func checkTerminalStatus(withSessionID sessionID: String) async throws -> TerminalStatus {
+    public func checkTerminalStatus(withSessionID sessionID: String) async throws -> DecodedResponse<TerminalStatus> {
         try await apiClientService.request(
             APIEndPoints.checkTerminalStatus(withSessionID: sessionID),
             mapper: TerminalStatusResponseMapper()
         )
     }
     
-    public func logOnToTerminal(withSessionID sessionID: String) async throws -> Logon {
+    public func logOnToTerminal(withSessionID sessionID: String) async throws -> DecodedResponse<Logon> {
         try await apiClientService.request(
             APIEndPoints.logonToPinpad(withSessionID: sessionID),
             mapper: LogonResponseMapper()
@@ -147,7 +43,7 @@ public class TransactionControl: TransactionRepository {
                                     withTipEnabled enableTip: Int,
                                     andShouldAutoPrintReceipt autoPrintReceipt: String,
                                     andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
-    ) async throws -> TransactionModel {
+    ) async throws -> DecodedResponse<TransactionModel> {
         try await apiClientService.request(
             APIEndPoints.initiateTransaction(withSessionID: sessionID,
                                              andMerchant: merchant,
@@ -176,7 +72,7 @@ public class TransactionControl: TransactionRepository {
                                   withTipEnabled enableTip: Int,
                                   andShouldAutoPrintReceipt autoPrintReceipt: String,
                                   andPurchaseAnalysisData purchaseAnalysisData: [String: Any]
-    ) async throws -> Refund {
+    ) async throws -> DecodedResponse<Refund> {
         try await apiClientService.request(
             APIEndPoints.initiateRefund(withSessionID: sessionID,
                                         andMerchant: merchant,
@@ -194,14 +90,14 @@ public class TransactionControl: TransactionRepository {
         )
     }
     
-    public func cancelTransaction(forSessionID sessionID: String) async throws -> SendKey {
+    public func cancelTransaction(forSessionID sessionID: String) async throws -> DecodedResponse<SendKey> {
         try await apiClientService.request(
             APIEndPoints.cancelTransaction(forSessionID: sessionID),
             mapper: SendKeyResponseResponseMapper()
         )
     }
     
-    public func getTransactionStatus(forSessionID sessionID: String) async throws -> TransactionModel {
+    public func getTransactionStatus(forSessionID sessionID: String) async throws -> DecodedResponse<TransactionModel> {
         
         try await apiClientService.request(
             APIEndPoints.getTransactionStatus(forSessionID: sessionID),
@@ -215,7 +111,7 @@ public class TransactionControl: TransactionRepository {
                                        onApplication application: String,
                                        andShouldAutoPrintReceipt autoPrintReceipt: String,
                                        andReceiptReprintType reprintType: String
-    ) async throws -> TransactionReceipt {
+    ) async throws -> DecodedResponse<TransactionReceipt> {
         try await apiClientService.request(
             APIEndPoints.getTransactionReceipt(withSessionID: sessionID,
                                                andMerchant: merchant,
@@ -228,11 +124,10 @@ public class TransactionControl: TransactionRepository {
         )
     }
     
-    public func getTransactionProgress(forSessionID sessionID: String) async throws -> TransactionModel {
+    public func getTransactionProgress(forSessionID sessionID: String) async throws -> DecodedResponse<TransactionModel> {
         try await apiClientService.request(
             APIEndPoints.getTransactionProgressStatus(forSessionID: sessionID),
             mapper: TransactionModelResponseMapper()
         )
     }
 }
-
