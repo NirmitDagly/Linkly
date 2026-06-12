@@ -84,7 +84,7 @@ extension TransactionInteraction {
                                           forPurchaseAmount amount: String,
                                           andTxnRefNumber txnRefNumber: String,
                                           andTippingEnabled tippingEnabled: Bool
-    ) async throws -> TransactionModel {
+    ) async throws -> (Int, TransactionModel) {
         var transactionModel = demoTransactionModel
         do {
             async let getTransactionResponse = transactionControl.initiateTransaction(withSessionID: sessionId,
@@ -107,7 +107,7 @@ extension TransactionInteraction {
                 transactionModel.linklyTransaction.receipts = try await getTransactionReceipt
                 transactionModel.linklyTransaction.sessionId = sessionId
             }
-            return transactionModel
+            return (transactionResponseDetails.statusCode, transactionModel)
         } catch {
             throw error
         }
@@ -116,7 +116,7 @@ extension TransactionInteraction {
     public func refundPaymentWithLinkly(withSessionId sessionId: String,
                                         forRefundAmount amount: String,
                                         andTxnRefNumber txnRefNumber: String
-    ) async throws -> Refund {
+    ) async throws -> (Int, Refund) {
         var refundModel = demoRefundModel
         do {
             async let getRefundResponse = transactionControl.refundTransaction(withSessionID: sessionId,
@@ -141,7 +141,7 @@ extension TransactionInteraction {
                 refundModel.linklyRefund.receipts = try await getRefundReceipt
                 refundModel.linklyRefund.sessionId = sessionId
             }
-            return refundModel
+            return (refundResponseDetails.statusCode, refundModel)
         } catch {
             throw error
         }
