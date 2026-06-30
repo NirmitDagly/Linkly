@@ -11,6 +11,7 @@ import HTTPNetwork
 import SwiftUI
 import DesignSystem
 
+//MARK: Setup configuration for transaction
 class LinklyTransactionConfiguration: ObservableObject {
 
     let apiClientService: APIClientService

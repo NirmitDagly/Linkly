@@ -11,6 +11,7 @@ import HTTPNetwork
 import SwiftUI
 import DesignSystem
 
+//MARK: Setup configuration for Pairing and Authentication
 public class LinklyConfiguration: ObservableObject {
     let apiClientService: APIClientService
     
