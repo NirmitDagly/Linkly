@@ -46,7 +46,8 @@ public class TerminalPairing: TerminalOperationRepository {
                                       andPOSID: posID,
                                       andPOSVendorID: vendorID
                                      ),
-            mapper: AuthTokenResponseMapper()
+            mapper: AuthTokenResponseMapper(),
+            retryPolicy: DefaultAPIRetryPolicy()
         )
     }
 }

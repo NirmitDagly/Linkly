@@ -11,7 +11,7 @@ import HTTPNetwork
 import SwiftUI
 import DesignSystem
 
-class LinklyConfiguration: ObservableObject {
+public class LinklyConfiguration: ObservableObject {
     let apiClientService: APIClientService
     
     init(apiClientService: APIClientService) {
@@ -19,7 +19,7 @@ class LinklyConfiguration: ObservableObject {
     }
 }
 
-class AuthConfiguration: ObservableObject {
+public class AuthConfiguration: ObservableObject {
     let configuration: LinklyConfiguration
     
     init(isProductionMode prodMode: Bool) {
@@ -46,8 +46,8 @@ class AuthConfiguration: ObservableObject {
 final public class Pairing: ObservableObject {
     var terminalPairing: TerminalPairing
     
-    public init(isProductionMode mode: Bool) {
-        self.terminalPairing = TerminalPairing.init(apiClientService: AuthConfiguration.init(isProductionMode: mode).configuration.apiClientService)
+    public init(authConfiguration: AuthConfiguration) {
+        self.terminalPairing = TerminalPairing.init(apiClientService: authConfiguration.configuration.apiClientService)
     }
     
     public func initiatePairing(withTerminalNumber terminalNumber: String,
