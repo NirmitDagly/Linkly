@@ -20,31 +20,28 @@ jobs:
       - name: Get latest tag
         id: get_tag
         run: |
-          LATEST=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
-          echo "latest=${LATEST:-0.0.0}" >> $GITHUB_OUTPUT
-          echo "Latest tag found: ${LATEST:-0.0.0}"
+          LATEST=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
+          echo "latest=${LATEST:-v0.0.0}" >> $GITHUB_OUTPUT
+          echo "Latest tag found: ${LATEST:-v0.0.0}"
 
       - name: Bump version from commit message
         id: bump
         run: |
           VERSION="${{ steps.get_tag.outputs.latest }}"
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          VERSION_NUM="${VERSION#v}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
           COMMIT_MSG=$(git log -1 --pretty=%B)
 
           if echo "$COMMIT_MSG" | grep -qi "\[major\]"; then
-            NEW="$((MAJOR + 1)).0.0"
-            BUMP_TYPE="major"
+            NEW="v$((MAJOR + 1)).0.0"
           elif echo "$COMMIT_MSG" | grep -qi "\[minor\]"; then
-            NEW="${MAJOR}.$((MINOR + 1)).0"
-            BUMP_TYPE="minor"
+            NEW="v${MAJOR}.$((MINOR + 1)).0"
           else
-            NEW="${MAJOR}.${MINOR}.$((PATCH + 1))"
-            BUMP_TYPE="patch"
+            NEW="v${MAJOR}.${MINOR}.$((PATCH + 1))"
           fi
 
           echo "new_version=${NEW}" >> $GITHUB_OUTPUT
-          echo "bump_type=${BUMP_TYPE}" >> $GITHUB_OUTPUT
-          echo "Bumping ${BUMP_TYPE}: ${VERSION} → ${NEW}"
+          echo "Version bump: ${VERSION} → ${NEW}"
 
       - name: Create and push tag
         run: |
@@ -58,5 +55,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create ${{ steps.bump.outputs.new_version }} \
-            --title "v${{ steps.bump.outputs.new_version }}" \
+            --title "${{ steps.bump.outputs.new_version }}" \
             --generate-notes
