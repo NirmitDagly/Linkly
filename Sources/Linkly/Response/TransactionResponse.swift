@@ -184,13 +184,13 @@ struct PurchaseAnalysisDataResponse: Codable {
     var cem: String?
     
     enum CodingKeys: String, CodingKey {
-        case rfn
-        case ref
-        case hrc
-        case hrt
-        case sur
-        case amt
-        case cem
+        case rfn = "RFN"
+        case ref = "REF"
+        case hrc = "HRC"
+        case hrt = "HRT"
+        case sur = "SUR"
+        case amt = "AMT"
+        case cem = "CEM"
     }
 }
 
