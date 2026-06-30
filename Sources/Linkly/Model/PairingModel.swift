@@ -1,6 +1,6 @@
 //
 //  PairingModel.swift
-//
+//  Linkly
 //
 //  Created by Miamedia Developer on 15/08/24.
 //

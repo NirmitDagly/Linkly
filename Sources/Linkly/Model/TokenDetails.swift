@@ -1,6 +1,6 @@
 //
 //  TokenDetails.swift
-//
+//  Linkly
 //
 //  Created by Miamedia Developer on 02/10/24.
 //
