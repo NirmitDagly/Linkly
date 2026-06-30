@@ -15,21 +15,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0          # needed to read all tags
+          fetch-depth: 0
 
       - name: Get latest tag
         id: get_tag
         run: |
           LATEST=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
           echo "latest=${LATEST:-0.0.0}" >> $GITHUB_OUTPUT
+          echo "Latest tag found: ${LATEST:-0.0.0}"
 
-      - name: Bump patch version
+      - name: Bump version from commit message
         id: bump
         run: |
           VERSION="${{ steps.get_tag.outputs.latest }}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-          NEW="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+
+          if echo "$COMMIT_MSG" | grep -qi "\[major\]"; then
+            NEW="$((MAJOR + 1)).0.0"
+            BUMP_TYPE="major"
+          elif echo "$COMMIT_MSG" | grep -qi "\[minor\]"; then
+            NEW="${MAJOR}.$((MINOR + 1)).0"
+            BUMP_TYPE="minor"
+          else
+            NEW="${MAJOR}.${MINOR}.$((PATCH + 1))"
+            BUMP_TYPE="patch"
+          fi
+
           echo "new_version=${NEW}" >> $GITHUB_OUTPUT
+          echo "bump_type=${BUMP_TYPE}" >> $GITHUB_OUTPUT
+          echo "Bumping ${BUMP_TYPE}: ${VERSION} → ${NEW}"
 
       - name: Create and push tag
         run: |
