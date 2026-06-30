@@ -22,7 +22,7 @@ public class LinklyConfiguration: ObservableObject {
 public class AuthConfiguration: ObservableObject {
     let configuration: LinklyConfiguration
     
-    init(isProductionMode prodMode: Bool) {
+    public init(isProductionMode prodMode: Bool) {
         var apiClientService = APIClientService(configuration: .init(baseURL: URL(string: "https://auth.sandbox.cloud.pceftpos.com"),
                                                                      baseHeaders: ["Accept": "application/json",
                                                                                    "content-type": "application/json"
