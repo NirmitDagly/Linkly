@@ -6,9 +6,7 @@
 //
 
 import Foundation
-import Logger
 import HTTPNetwork
-import SwiftUI
 import DesignSystem
 
 //MARK: Setup configuration for transaction
@@ -136,7 +134,6 @@ extension TransactionInteraction {
             
             let refundResponseDetails = try await getRefundResponse
             if (refundResponseDetails.statusCode == 200 || refundResponseDetails.statusCode == 201) && refundResponseDetails.model != nil {
-                print(refundResponseDetails)
                 refundModel = refundResponseDetails.model!
                 async let getRefundReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
                 refundModel.linklyRefund.receipts = try await getRefundReceipt
@@ -154,7 +151,6 @@ extension TransactionInteraction {
         do {
             async let getTransactionResponse = transactionControl.cancelTransaction(forSessionID: sessionId)
             let transactionResponseDetails = try await getTransactionResponse
-            print(transactionResponseDetails)
             guard transactionResponseDetails.model != nil, transactionResponseDetails.model!.response != "" else {
                 return "Ok"
             }
@@ -214,7 +210,6 @@ extension TransactionInteraction {
             
             let transactionResponseDetails = try await getTransactionResponse
             if (transactionResponseDetails.statusCode == 200 || transactionResponseDetails.statusCode == 201) && transactionResponseDetails.model != nil {
-                print(transactionResponseDetails)
                 transactionModel = transactionResponseDetails.model!
                 async let getTransactionReceipt = await getTransactionReceipt(forTxnRefNumber: txnRefNumber)
                 transactionModel.linklyTransaction.receipts = try await getTransactionReceipt
@@ -234,7 +229,6 @@ extension TransactionInteraction {
             async let getTransactionResponse = transactionControl.getTransactionStatus(forSessionID: sessionID)
             let transactionResponseDetails = try await getTransactionResponse
             if (transactionResponseDetails.statusCode == 200 || transactionResponseDetails.statusCode == 201) && transactionResponseDetails.model != nil {
-                print(transactionResponseDetails)
                 transactionModel = transactionResponseDetails.model!
             }
             return (transactionResponseDetails.statusCode, transactionModel.linklyTransaction)

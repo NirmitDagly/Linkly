@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "7595cbcf59809f9977c5f6378500de2ad73b7ddb",
-        "version" : "5.12.0"
+        "revision" : "bda9ed57d72988a3a2ada33d824583541f86eac6",
+        "version" : "5.12.2"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/DesignSystem",
       "state" : {
-        "revision" : "2408aa50d6b79737eb22e3ee76dea942f5064ef8",
-        "version" : "1.0.32"
+        "revision" : "ab4bc1e8166790f6512ee58ed59d6fb6aa2af790",
+        "version" : "1.0.38"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/NirmitDagly/Network",
       "state" : {
-        "revision" : "14e742a620bfa0671af8a83212f5d85ab00976ff",
-        "version" : "1.0.56"
+        "revision" : "6c625fe3296f72dde0cf25ca278bf86812139452",
+        "version" : "1.0.60"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "a878e7f8f46cfc0e1125e565b5c08e7d5272dc9a",
-        "version" : "1.14.0"
+        "revision" : "e3da04078777e6a1b72ce19981fbd6539b0847d8",
+        "version" : "1.17.0"
       }
     }
   ],

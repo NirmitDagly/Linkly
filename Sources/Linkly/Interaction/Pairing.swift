@@ -6,10 +6,7 @@
 //
 
 import Foundation
-import Logger
 import HTTPNetwork
-import SwiftUI
-import DesignSystem
 
 //MARK: Setup configuration for Pairing and Authentication
 public class LinklyConfiguration: ObservableObject {
@@ -68,10 +65,8 @@ final public class Pairing: ObservableObject {
             )
             
             let authSecretDetails = try await getAuthSecret
-            print(authSecretDetails)
             
             guard authSecretDetails.model != nil, authSecretDetails.model!.terminalSecret != "" else {
-                print("Unable to get auth secret details... Hence, I am returning back.")
                 return TokenDetails(authSecret: "",
                                     authToken: "",
                                     tokenExpiryTime: 0
@@ -104,10 +99,8 @@ final public class Pairing: ObservableObject {
                                                                   andPOSVendorID: vendorID
             )
             let authTokenDetails = try await getAuthToken
-            print(authTokenDetails)
             
             guard authTokenDetails.model != nil else {
-                print("Unable to get auth token details... Hence, I am returning back.")
                 return TokenDetails(authSecret: "",
                                     authToken: "",
                                     tokenExpiryTime: 0
